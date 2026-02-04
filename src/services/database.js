@@ -236,9 +236,9 @@ export const getSetting = async (key) => {
     .from('settings')
     .select('value')
     .eq('key', key)
-    .single();
+    .maybeSingle();
   
-  if (error && error.code !== 'PGRST116') throw error;
+  if (error) throw error;
   return data?.value || null;
 };
 
