@@ -26,6 +26,7 @@ export const Button = ({
       onClick={onClick}
       disabled={disabled}
       className={classes}
+      style={{ fontFamily: "'Ciscopic', 'Nunito', system-ui, sans-serif" }}
     >
       {icon && <span className={styles.icon}>{icon}</span>}
       {children}

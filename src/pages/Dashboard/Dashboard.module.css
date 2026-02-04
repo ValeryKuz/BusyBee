@@ -86,21 +86,17 @@
   display: flex;
   gap: var(--spacing-xl);
   padding: var(--spacing-md) 0;
-  align-items: stretch;
+  align-items: flex-start;
 }
 
 .topRowLeft {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
 }
 
 .topRowRight {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
 }
 
 .childrenSection {
@@ -118,7 +114,6 @@
 .dailyFunSection {
   display: flex;
   flex-direction: column;
-  flex: 1;
 }
 
 .dailyFunCard {
@@ -131,9 +126,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex: 1;
-  min-height: 200px;
-  max-height: 300px;
+  height: 300px;
 }
 
 @keyframes dailyFunBounce {
@@ -324,14 +317,16 @@
 
 .emptyState {
   text-align: center;
-  padding: var(--spacing-2xl);
+  padding: var(--spacing-xl);
   background: var(--color-white);
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-soft);
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-md);
+  height: 300px;
 }
 
 .emptyIcon {
