@@ -241,7 +241,11 @@ export const Calendar = () => {
                     </div>
                     {birthday.note && <p className={styles.activityNote}>{birthday.note}</p>}
                     <button
-                      onClick={() => deleteBirthday(birthday.id)}
+                      onClick={() => {
+                        if (window.confirm(`Delete ${birthday.name}'s birthday?`)) {
+                          deleteBirthday(birthday.id);
+                        }
+                      }}
                       className={styles.deleteActivityBtn}
                     >
                       ✕
@@ -302,7 +306,11 @@ export const Calendar = () => {
                       </div>
                       {entry.note && <p className={styles.activityNote}>{entry.note}</p>}
                       <button
-                        onClick={() => deleteEntry(entry.id)}
+                        onClick={() => {
+                          if (window.confirm('Delete this entry?')) {
+                            deleteEntry(entry.id);
+                          }
+                        }}
                         className={styles.deleteActivityBtn}
                       >
                         ✕
