@@ -235,3 +235,18 @@ export const MAGIC_WORDS = [
   { word: 'Snuggle', emoji: '🐨', meaning: 'Get close and comfy!' },
   { word: 'Twinkle', emoji: '⭐', meaning: 'Shine like a star!' },
 ];
+
+export const KIDS_ACTIVITIES = [
+  { emoji: '🦷', label: 'Brushed Teeth' },
+  { emoji: '🧹', label: 'Cleaned Room' },
+  { emoji: '📚', label: 'Read a Book' },
+  { emoji: '🛏️', label: 'Made Bed' },
+  { emoji: '🍽️', label: 'Set Table' },
+  { emoji: '👕', label: 'Got Dressed' },
+  { emoji: '🎒', label: 'Packed Bag' },
+  { emoji: '✨', label: 'Helped Parent' },
+  { emoji: '🧸', label: 'Shared Toys' },
+  { emoji: '🙏', label: 'Said Please/Thanks' },
+  { emoji: '🧼', label: 'Washed Hands' },
+  { emoji: '🥗', label: 'Ate Veggies' },
+];
