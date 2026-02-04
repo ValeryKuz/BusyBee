@@ -1,0 +1,107 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-md);
+  background: var(--color-white);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-soft);
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+}
+
+.card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: var(--shadow-medium);
+  border-color: #C1FFD7;
+}
+
+.card:active {
+  transform: scale(0.98);
+}
+
+.selected {
+  border-color: #C1FFD7;
+  box-shadow: 0 0 20px rgba(193, 255, 215, 0.6);
+  background: linear-gradient(135deg, #FEFFD6 0%, #E0FFEB 100%);
+}
+
+.avatarWrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FCFFA6 0%, #C1FFD7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-soft);
+}
+
+.avatar {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.name {
+  font-family: 'Ciscopic', var(--font-heading);
+  font-size: var(--font-size-md);
+  font-weight: 800;
+  color: var(--color-dark-text);
+  margin: 0;
+}
+
+.honeyBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: linear-gradient(135deg, #FEFFD6 0%, #E8EB7A 100%);
+  padding: 2px var(--spacing-sm);
+  border-radius: var(--radius-medium);
+}
+
+.honeyIcon {
+  font-size: 0.9rem;
+}
+
+.honeyCount {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-dark-text);
+}
+
+/* Larger screens */
+@media (min-width: 1024px) {
+  .card {
+    min-width: 120px;
+    padding: var(--spacing-lg);
+    gap: var(--spacing-sm);
+  }
+
+  .avatarWrapper {
+    width: 70px;
+    height: 70px;
+  }
+
+  .avatar {
+    font-size: 2.5rem;
+  }
+
+  .name {
+    font-size: var(--font-size-lg);
+  }
+
+  .honeyBadge {
+    padding: var(--spacing-xs) var(--spacing-md);
+  }
+
+  .honeyIcon {
+    font-size: 1.1rem;
+  }
+
+  .honeyCount {
+    font-size: var(--font-size-md);
+  }
+}

@@ -1,0 +1,1 @@
+export { DailyFunLottie } from './DailyFunLottie';

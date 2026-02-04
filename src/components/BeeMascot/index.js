@@ -1,0 +1,1 @@
+export { BeeMascot } from './BeeMascot';

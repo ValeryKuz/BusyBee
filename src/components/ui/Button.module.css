@@ -1,0 +1,142 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.button:active {
+  transform: scale(0.95);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Variants - New Pastel Colors */
+.primary {
+  background: linear-gradient(135deg, #FCFFA6 0%, #E8EB7A 100%);
+  color: #4A4A4A;
+  box-shadow: 0 2px 8px rgba(252, 255, 166, 0.4);
+}
+
+.primary:hover {
+  background: linear-gradient(135deg, #E8EB7A 0%, #D4D76A 100%);
+  box-shadow: 0 0 20px rgba(252, 255, 166, 0.6);
+}
+
+.secondary {
+  background: linear-gradient(135deg, #B5DEFF 0%, #8EC9F0 100%);
+  color: #4A4A4A;
+  box-shadow: 0 2px 8px rgba(181, 222, 255, 0.4);
+}
+
+.secondary:hover {
+  background: linear-gradient(135deg, #8EC9F0 0%, #6BB8E8 100%);
+  box-shadow: 0 0 20px rgba(181, 222, 255, 0.6);
+}
+
+.accent {
+  background: linear-gradient(135deg, #C1FFD7 0%, #9BE8B8 100%);
+  color: #4A4A4A;
+  box-shadow: 0 2px 8px rgba(193, 255, 215, 0.4);
+}
+
+.accent:hover {
+  background: linear-gradient(135deg, #9BE8B8 0%, #7DD4A0 100%);
+  box-shadow: 0 0 20px rgba(193, 255, 215, 0.6);
+}
+
+.ghost {
+  background: transparent;
+  color: #4A4A4A;
+  box-shadow: none;
+}
+
+.ghost:hover {
+  background: rgba(202, 184, 255, 0.3);
+  box-shadow: none;
+  transform: none;
+}
+
+.danger {
+  background: linear-gradient(135deg, #FF9B9B 0%, #FF7A7A 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(255, 155, 155, 0.4);
+}
+
+.danger:hover {
+  background: linear-gradient(135deg, #FF7A7A 0%, #FF5A5A 100%);
+}
+
+/* Sizes */
+.small {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 12px;
+  min-height: 36px;
+}
+
+.medium {
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 16px;
+  min-height: 44px;
+}
+
+.large {
+  padding: 1rem 1.5rem;
+  font-size: 1.125rem;
+  border-radius: 18px;
+  min-height: 52px;
+}
+
+.huge {
+  padding: 1.25rem 2rem;
+  font-size: 1.25rem;
+  border-radius: 20px;
+  min-height: 60px;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .small {
+    padding: 0.625rem 1.25rem;
+    font-size: 1rem;
+    min-height: 40px;
+  }
+
+  .medium {
+    padding: 0.875rem 1.5rem;
+    font-size: 1.125rem;
+    min-height: 48px;
+  }
+
+  .large {
+    padding: 1.125rem 1.75rem;
+    font-size: 1.25rem;
+    min-height: 56px;
+  }
+}

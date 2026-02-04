@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+@font-face {
+  font-family: 'Ciscopic';
+  src: url('./assets/fonts/Ciscopic-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* New pastel palette */
+  --color-honey: #FCFFA6;
+  --color-honey-dark: #E8EB7A;
+  --color-mint: #C1FFD7;
+  --color-mint-dark: #9BE8B8;
+  --color-sky: #B5DEFF;
+  --color-sky-dark: #8EC9F0;
+  --color-lavender: #CAB8FF;
+  --color-lavender-dark: #A890E8;
+  
+  /* Legacy mappings */
+  --color-primary: #FCFFA6;
+  --color-secondary: #B5DEFF;
+  --color-accent: #C1FFD7;
+  --color-coral: #FF9B9B;
+  --color-cream: #FFFEF5;
+  --color-honey-gold: #E8EB7A;
+  --color-dark-text: #4A4A4A;
+  --color-light-text: #7A7A7A;
+  --color-white: #FFFFFF;
+  
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-medium: 0 6px 30px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 20px rgba(252, 255, 166, 0.6);
+  
+  --radius-small: 12px;
+  --radius-medium: 20px;
+  --radius-large: 30px;
+  
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  --font-heading: 'Ciscopic', 'Nunito', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+}
+
+@layer base {
+  * {
+    @apply box-border m-0 p-0;
+  }
+  
+  body {
+    @apply min-h-screen antialiased;
+    background: linear-gradient(135deg, #FFFEF5 0%, #F5FFFA 50%, #F5FAFF 100%);
+    color: #4A4A4A;
+    font-family: 'Nunito', system-ui, sans-serif;
+    line-height: 1.5;
+  }
+  
+  #root {
+    @apply min-h-screen;
+  }
+  
+  button {
+    @apply font-sans cursor-pointer border-none bg-transparent;
+  }
+  
+  input, textarea, select {
+    @apply font-sans text-base;
+  }
+}
+
+@layer utilities {
+  .text-dark {
+    color: var(--color-dark-text);
+  }
+  
+  .text-light {
+    color: var(--color-light-text);
+  }
+}

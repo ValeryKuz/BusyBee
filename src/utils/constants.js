@@ -1,0 +1,237 @@
+export const STORAGE_KEY = 'busybee_data';
+export const STORAGE_VERSION = 1;
+
+export const ENTRY_TYPES = {
+  GOOD: 'good',
+  BAD: 'bad',
+  GIFT: 'gift',
+  ACTIVITY: 'activity',
+  FAMILY_ACTIVITY: 'family_activity',
+};
+
+export const BEHAVIOR_ICONS = {
+  good: [
+    { emoji: '⭐', label: 'Great job!' },
+    { emoji: '🌟', label: 'Super star' },
+    { emoji: '👏', label: 'Good sharing' },
+    { emoji: '🎯', label: 'Focused' },
+    { emoji: '💪', label: 'Tried hard' },
+    { emoji: '🏆', label: 'Winner' },
+    { emoji: '✨', label: 'Kind' },
+    { emoji: '🌈', label: 'Happy' },
+  ],
+  bad: [
+    { emoji: '😔', label: 'Sad moment' },
+    { emoji: '💭', label: 'Needs think' },
+    { emoji: '🔄', label: 'Try again' },
+    { emoji: '📝', label: 'Reminder' },
+    { emoji: '🧹', label: 'Made mess' },
+    { emoji: '😭', label: 'Crying' },
+    { emoji: '😴', label: 'Bedtime fuss' },
+  ],
+  gift: [
+    { emoji: '🎁', label: 'Gift' },
+    { emoji: '🎀', label: 'Surprise' },
+    { emoji: '🎈', label: 'Party' },
+    { emoji: '🧸', label: 'Toy' },
+    { emoji: '🎮', label: 'Game' },
+    { emoji: '📚', label: 'Book' },
+    { emoji: '🍬', label: 'Treat' },
+    { emoji: '🎂', label: 'Cake' },
+  ],
+  activity: [
+    { emoji: '👫', label: 'Playdate' },
+    { emoji: '🎬', label: 'Movie' },
+    { emoji: '🍕', label: 'Restaurant' },
+    { emoji: '🛝', label: 'Playground' },
+    { emoji: '🎨', label: 'Art' },
+    { emoji: '⚽', label: 'Sports' },
+    { emoji: '🎸', label: 'Music' },
+    { emoji: '📖', label: 'Library' },
+    { emoji: '🦁', label: 'Zoo' },
+    { emoji: '🎳', label: 'Bowling' },
+    { emoji: '🧁', label: 'Baking' },
+    { emoji: '🏊', label: 'Swimming' },
+    { emoji: '🚴', label: 'Biking' },
+    { emoji: '🎮', label: 'Gaming' },
+    { emoji: '🏠', label: 'Grandparents' },
+    { emoji: '🛒', label: 'Shopping' },
+  ],
+};
+
+export const EVENT_ICONS = [
+  { emoji: '🏖️', label: 'Beach' },
+  { emoji: '✈️', label: 'Trip' },
+  { emoji: '🎂', label: 'Birthday' },
+  { emoji: '🎄', label: 'Christmas' },
+  { emoji: '🎃', label: 'Halloween' },
+  { emoji: '🐰', label: 'Easter' },
+  { emoji: '🎢', label: 'Theme Park' },
+  { emoji: '🏕️', label: 'Camping' },
+  { emoji: '🎪', label: 'Circus' },
+  { emoji: '🎭', label: 'Show' },
+  { emoji: '⛷️', label: 'Skiing' },
+  { emoji: '🏊', label: 'Swimming' },
+  { emoji: '👨‍👩‍👧', label: 'Family' },
+  { emoji: '🎁', label: 'Surprise' },
+  { emoji: '🏠', label: 'Grandparents' },
+  { emoji: '🎉', label: 'Party' },
+  { emoji: '👫', label: 'Playdate' },
+  { emoji: '🎬', label: 'Movie' },
+  { emoji: '🍕', label: 'Restaurant' },
+  { emoji: '🎨', label: 'Art Class' },
+  { emoji: '⚽', label: 'Sports' },
+  { emoji: '🎸', label: 'Music Lesson' },
+  { emoji: '📖', label: 'Library' },
+  { emoji: '🦁', label: 'Zoo' },
+  { emoji: '🎳', label: 'Bowling' },
+  { emoji: '🧁', label: 'Baking' },
+  { emoji: '🩺', label: 'Doctor' },
+  { emoji: '✂️', label: 'Haircut' },
+];
+
+export const BIRTHDAY_ICONS = [
+  { emoji: '🎂', label: 'Cake' },
+  { emoji: '🎈', label: 'Balloons' },
+  { emoji: '🎁', label: 'Gift' },
+  { emoji: '🎉', label: 'Party' },
+  { emoji: '🧁', label: 'Cupcake' },
+  { emoji: '👑', label: 'Crown' },
+  { emoji: '🌟', label: 'Star' },
+  { emoji: '🦄', label: 'Unicorn' },
+];
+
+export const ANIMAL_AVATARS = [
+  { emoji: '🐰', name: 'Bunny' },
+  { emoji: '🦊', name: 'Fox' },
+  { emoji: '🐻', name: 'Bear' },
+  { emoji: '🐼', name: 'Panda' },
+  { emoji: '🦁', name: 'Lion' },
+  { emoji: '🐯', name: 'Tiger' },
+  { emoji: '🐸', name: 'Frog' },
+  { emoji: '🦋', name: 'Butterfly' },
+  { emoji: '🐢', name: 'Turtle' },
+  { emoji: '🦄', name: 'Unicorn' },
+  { emoji: '🐶', name: 'Puppy' },
+  { emoji: '🐱', name: 'Kitty' },
+];
+
+export const HONEY_VALUES = {
+  GOOD_DEFAULT: 5,
+  BAD_DEFAULT: -2,
+  GIFT_DEFAULT: 0,
+};
+
+export const COLORS = {
+  primary: '#FFD93D',
+  secondary: '#6EC6FF',
+  accent: '#7ED957',
+  coral: '#FF6B6B',
+  cream: '#FFF9E6',
+  honeyGold: '#FFD700',
+  darkText: '#4A4A4A',
+  lightText: '#7A7A7A',
+};
+
+export const DAILY_FUN_CATEGORIES = [
+  { id: 'animal', emoji: '🦁', label: 'Silly Animal' },
+  { id: 'joke', emoji: '😂', label: 'Joke of the Day' },
+  { id: 'fact', emoji: '🧠', label: 'Fun Fact' },
+  { id: 'color', emoji: '🎨', label: 'Color of the Day' },
+  { id: 'challenge', emoji: '🏆', label: 'Daily Challenge' },
+  { id: 'word', emoji: '✨', label: 'Magic Word' },
+];
+
+export const SILLY_ANIMALS = [
+  { emoji: '🐜', name: 'Ant', sound: 'March march march!', lottie: 'ant' },
+  { emoji: '🐤', name: 'Baby Chick', sound: 'Peep peep peep!', lottie: 'baby-chick' },
+  { emoji: '🦇', name: 'Bat', sound: 'Flap flap flap!', lottie: 'bat' },
+  { emoji: '🐝', name: 'Bee', sound: 'Buzzzzz!', lottie: 'bee' },
+  { emoji: '🐦', name: 'Bird', sound: 'Tweet tweet!', lottie: 'bird' },
+  { emoji: '🐡', name: 'Blowfish', sound: 'Puff puff!', lottie: 'blowfish' },
+];
+
+export const KIDS_JOKES = [
+  { setup: 'Why did the banana go to the doctor?', punchline: 'Because it wasn\'t peeling well!' },
+  { setup: 'What do you call a sleeping dinosaur?', punchline: 'A dino-snore!' },
+  { setup: 'Why do bees have sticky hair?', punchline: 'Because they use honeycombs!' },
+  { setup: 'What do you call a fish without eyes?', punchline: 'A fsh!' },
+  { setup: 'Why did the cookie go to the hospital?', punchline: 'Because it felt crummy!' },
+  { setup: 'What do you call a bear with no teeth?', punchline: 'A gummy bear!' },
+  { setup: 'Why can\'t you give Elsa a balloon?', punchline: 'Because she will let it go!' },
+  { setup: 'What do you call cheese that isn\'t yours?', punchline: 'Nacho cheese!' },
+  { setup: 'Why did the teddy bear say no to dessert?', punchline: 'Because she was already stuffed!' },
+  { setup: 'What animal is always at a baseball game?', punchline: 'A bat!' },
+  { setup: 'What do cows read in the morning?', punchline: 'The moos-paper!' },
+  { setup: 'Why do giraffes have long necks?', punchline: 'Because their feet stink!' },
+  { setup: 'What do you call a pig that knows karate?', punchline: 'A pork chop!' },
+  { setup: 'Why did the sun go to school?', punchline: 'To get brighter!' },
+  { setup: 'What do you call a dinosaur that crashes cars?', punchline: 'Tyrannosaurus Wrecks!' },
+];
+
+export const FUN_FACTS = [
+  { emoji: '🦋', fact: 'Butterflies taste with their feet!' },
+  { emoji: '🐘', fact: 'Elephants are the only animals that can\'t jump!' },
+  { emoji: '🦒', fact: 'Giraffes have the same number of neck bones as humans - just 7!' },
+  { emoji: '🐙', fact: 'Octopuses have three hearts and blue blood!' },
+  { emoji: '🐝', fact: 'Bees can recognize human faces!' },
+  { emoji: '🦜', fact: 'Parrots can live for over 80 years!' },
+  { emoji: '🐢', fact: 'Turtles can breathe through their butts!' },
+  { emoji: '🌈', fact: 'Rainbows are actually full circles!' },
+  { emoji: '⭐', fact: 'There are more stars in space than grains of sand on Earth!' },
+  { emoji: '🦈', fact: 'Sharks have been around longer than dinosaurs!' },
+  { emoji: '🐨', fact: 'Koalas sleep up to 22 hours a day!' },
+  { emoji: '🦩', fact: 'Flamingos are born white and turn pink from eating shrimp!' },
+  { emoji: '🐧', fact: 'Penguins propose with pebbles!' },
+  { emoji: '🌙', fact: 'The moon is slowly moving away from Earth!' },
+  { emoji: '🍯', fact: 'Honey never goes bad - ever!' },
+];
+
+export const DAILY_COLORS = [
+  { color: 'Red', emoji: '🔴', hex: '#FF6B6B', things: '🍎 🍓 🚒' },
+  { color: 'Orange', emoji: '🟠', hex: '#FFA500', things: '🍊 🥕 🎃' },
+  { color: 'Yellow', emoji: '🟡', hex: '#FFD93D', things: '🌻 ⭐ 🍋' },
+  { color: 'Green', emoji: '🟢', hex: '#7ED957', things: '🥒 🐸 🌲' },
+  { color: 'Blue', emoji: '🔵', hex: '#6EC6FF', things: '🌊 🐳 💎' },
+  { color: 'Purple', emoji: '🟣', hex: '#B19CD9', things: '🍇 🦄 🔮' },
+  { color: 'Pink', emoji: '💗', hex: '#FFB6C1', things: '🌸 🦩 🍬' },
+  { color: 'Brown', emoji: '🟤', hex: '#D2691E', things: '🧸 🍫 🪵' },
+  { color: 'White', emoji: '⚪', hex: '#FFFFFF', things: '☁️ 🐑 ❄️' },
+  { color: 'Black', emoji: '⚫', hex: '#333333', things: '🐈‍⬛ 🎩 🌑' },
+];
+
+export const DAILY_CHALLENGES = [
+  { emoji: '🤗', challenge: 'Give 3 hugs today!' },
+  { emoji: '🦘', challenge: 'Jump up and down 10 times!' },
+  { emoji: '😊', challenge: 'Make someone smile!' },
+  { emoji: '🧹', challenge: 'Help clean up one thing!' },
+  { emoji: '🎨', challenge: 'Draw a silly picture!' },
+  { emoji: '💃', challenge: 'Do a happy dance!' },
+  { emoji: '🥰', challenge: 'Say "I love you" to someone!' },
+  { emoji: '👋', challenge: 'Wave to a neighbor!' },
+  { emoji: '🌳', challenge: 'Touch something in nature!' },
+  { emoji: '🎵', challenge: 'Sing your favorite song!' },
+  { emoji: '🤸', challenge: 'Try to touch your toes!' },
+  { emoji: '🐻', challenge: 'Walk like a bear!' },
+  { emoji: '🦁', challenge: 'Roar like a lion!' },
+  { emoji: '🌟', challenge: 'Tell someone they\'re awesome!' },
+  { emoji: '📚', challenge: 'Read a book together!' },
+];
+
+export const MAGIC_WORDS = [
+  { word: 'Happy', emoji: '😊', meaning: 'Feeling good inside!' },
+  { word: 'Brave', emoji: '🦁', meaning: 'Not afraid to try!' },
+  { word: 'Kind', emoji: '💝', meaning: 'Being nice to others!' },
+  { word: 'Silly', emoji: '🤪', meaning: 'Being funny and playful!' },
+  { word: 'Cozy', emoji: '🧸', meaning: 'Warm and snuggly!' },
+  { word: 'Sparkle', emoji: '✨', meaning: 'Shiny and magical!' },
+  { word: 'Giggle', emoji: '😂', meaning: 'A tiny little laugh!' },
+  { word: 'Cuddle', emoji: '🤗', meaning: 'A warm soft hug!' },
+  { word: 'Wonder', emoji: '🌈', meaning: 'Something amazing!' },
+  { word: 'Gentle', emoji: '🦋', meaning: 'Soft and careful!' },
+  { word: 'Zoom', emoji: '🚀', meaning: 'Going super fast!' },
+  { word: 'Bounce', emoji: '🏀', meaning: 'Jump up and down!' },
+  { word: 'Whisper', emoji: '🤫', meaning: 'A quiet little voice!' },
+  { word: 'Snuggle', emoji: '🐨', meaning: 'Get close and comfy!' },
+  { word: 'Twinkle', emoji: '⭐', meaning: 'Shine like a star!' },
+];

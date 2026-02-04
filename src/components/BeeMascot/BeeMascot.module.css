@@ -1,0 +1,65 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.bee {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 4px 8px rgba(255, 215, 0, 0.3));
+  transform: scaleX(-1);
+}
+
+.animated {
+  animation: bee-fly 4s ease-in-out infinite;
+}
+
+@keyframes bee-fly {
+  0%, 100% { transform: scaleX(-1) translate(0, 0) rotate(5deg); }
+  25% { transform: scaleX(-1) translate(-5px, -8px) rotate(-5deg); }
+  50% { transform: scaleX(-1) translate(-10px, 0) rotate(5deg); }
+  75% { transform: scaleX(-1) translate(-5px, 8px) rotate(-5deg); }
+}
+
+.small {
+  font-size: 2rem;
+}
+
+.medium {
+  font-size: 3.5rem;
+}
+
+.large {
+  font-size: 5rem;
+}
+
+.speechBubble {
+  background: var(--color-white);
+  border-radius: var(--radius-medium);
+  padding: var(--spacing-sm) var(--spacing-md);
+  box-shadow: var(--shadow-soft);
+  position: relative;
+  max-width: 200px;
+  text-align: center;
+}
+
+.speechBubble::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--color-white);
+}
+
+.speechBubble p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-dark-text);
+}
