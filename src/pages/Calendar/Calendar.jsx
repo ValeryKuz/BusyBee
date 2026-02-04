@@ -345,9 +345,9 @@ export const Calendar = () => {
   return (
     <div className={styles.page}>
       <div className={styles.header}>
-        <Button variant="ghost" size="small" onClick={() => navigate('/')}>
-          ← Back
-        </Button>
+        <button className={styles.backButton} onClick={() => navigate('/')}>
+          ←
+        </button>
         <div className={styles.monthNav}>
           <button className={styles.navButton} onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
             ‹

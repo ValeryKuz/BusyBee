@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useHive } from '../../hooks/useHive';
 import { BeeMascot } from '../../components/BeeMascot';
 import { KIDS_ACTIVITIES, ENTRY_TYPES } from '../../utils/constants';
 import styles from './Kids.module.css';
 
 export const Kids = () => {
+  const navigate = useNavigate();
   const { children, addEntry, loading } = useHive();
   const [selectedChild, setSelectedChild] = useState(null);
   const [feedback, setFeedback] = useState(null);
@@ -49,6 +51,9 @@ export const Kids = () => {
   if (!selectedChild) {
     return (
       <div className={styles.page}>
+        <button className={styles.backButtonTop} onClick={() => navigate('/')}>
+          ←
+        </button>
         <div className={styles.selectScreen}>
           <BeeMascot size="medium" animate />
           <h1 className={styles.title}>Who are you?</h1>

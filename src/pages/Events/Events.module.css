@@ -27,6 +27,22 @@
   margin-bottom: var(--spacing-xl);
 }
 
+.backButton {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: white;
+  border: none;
+  border-radius: var(--radius-medium);
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.2s;
+}
+
+.backButton:hover {
+  background: var(--color-honey);
+  transform: scale(1.1);
+}
+
 .title {
   font-size: var(--font-size-xl);
   font-weight: 800;

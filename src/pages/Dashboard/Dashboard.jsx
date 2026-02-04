@@ -168,6 +168,9 @@ export const Dashboard = () => {
           <h1 className={styles.title}>{greeting}!</h1>
         </div>
         <nav className={styles.nav}>
+          <Button variant="ghost" size="small" onClick={() => navigate('/kids')}>
+            👧🏻
+          </Button>
           <Button variant="ghost" size="small" onClick={() => navigate('/calendar')}>
             📅
           </Button>
@@ -218,20 +221,6 @@ export const Dashboard = () => {
       </div>
 
       <main className={styles.main}>
-        {selectedChild && (
-          <>
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>{selectedChild.name}&apos;s Honey Jar (Today)</h2>
-              <HoneyJar honey={getChildTodayHoney(selectedChild.id)} />
-            </section>
-
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>Log Activity</h2>
-              <BehaviorButtons childId={selectedChild.id} />
-            </section>
-          </>
-        )}
-
         {upcomingEvents.length > 0 && (
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
@@ -344,6 +333,25 @@ export const Dashboard = () => {
             </div>
           </div>
         </div>
+      </Modal>
+
+      <Modal 
+        isOpen={!!selectedChild} 
+        onClose={() => setSelectedChildId(null)} 
+        title={selectedChild ? `${selectedChild.avatar} ${selectedChild.name}'s Activity` : ''}
+        size="wide"
+      >
+        {selectedChild && (
+          <div className={styles.childModal}>
+            <div className={styles.childModalLeft}>
+              <HoneyJar honey={getChildTodayHoney(selectedChild.id)} />
+            </div>
+            <div className={styles.childModalActivity}>
+              <h3 className={styles.childModalSubtitle}>Log Activity</h3>
+              <BehaviorButtons childId={selectedChild.id} />
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );

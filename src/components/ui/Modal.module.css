@@ -25,6 +25,10 @@
   -ms-overflow-style: none;
 }
 
+.modal.wide {
+  max-width: min(850px, calc(100vw - 2rem));
+}
+
 .modal::-webkit-scrollbar {
   display: none;
 }
@@ -68,6 +72,7 @@
 
 .content {
   padding: 1.5rem;
+  overflow: hidden;
 }
 
 @keyframes fadeIn {

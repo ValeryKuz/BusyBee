@@ -49,9 +49,9 @@ export const Events = () => {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <Button variant="ghost" size="small" onClick={() => navigate('/')}>
-          ← Back
-        </Button>
+        <button className={styles.backButton} onClick={() => navigate('/')}>
+          ←
+        </button>
         <h1 className={styles.title}>🎉 Exciting Events!</h1>
         <Button variant="accent" size="small" onClick={() => setShowAddEvent(true)}>
           + Add
