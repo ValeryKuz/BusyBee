@@ -76,7 +76,8 @@
 @media (min-width: 768px) and (orientation: landscape) {
   .card {
     min-width: 90px;
-    height: calc(100% - var(--spacing-sm));
+    height: auto;
+    max-height: 180px;
     margin: var(--spacing-xs) 0;
     padding: var(--spacing-sm);
     gap: var(--spacing-xs);
