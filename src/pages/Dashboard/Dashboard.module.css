@@ -86,22 +86,27 @@
   display: flex;
   gap: var(--spacing-xl);
   padding: var(--spacing-md) 0;
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .topRowLeft {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .topRowRight {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .childrenSection {
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 .childrenGrid {
@@ -126,7 +131,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 300px;
+  flex: 1;
 }
 
 @keyframes dailyFunBounce {
@@ -554,6 +559,42 @@
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--spacing-md);
   }
+}
+
+.kidsScreenButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  margin-top: auto;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: linear-gradient(135deg, #FFE5EC 0%, #E0F4FF 50%, #E5FFE0 100%);
+  border: 3px solid var(--color-honey);
+  border-radius: var(--radius-large);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-soft);
+}
+
+.kidsScreenButton:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.kidsScreenButton:active {
+  transform: scale(0.98);
+}
+
+.kidsScreenIcon {
+  font-size: 2rem;
+}
+
+.kidsScreenText {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-dark-text);
 }
 
 .childModal {

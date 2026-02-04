@@ -168,9 +168,6 @@ export const Dashboard = () => {
           <h1 className={styles.title}>{greeting}!</h1>
         </div>
         <nav className={styles.nav}>
-          <Button variant="ghost" size="small" onClick={() => navigate('/kids')}>
-            👧🏻
-          </Button>
           <Button variant="ghost" size="small" onClick={() => navigate('/calendar')}>
             📅
           </Button>
@@ -207,6 +204,10 @@ export const Dashboard = () => {
                   />
                 ))}
               </div>
+              <button className={styles.kidsScreenButton} onClick={() => navigate('/kids')}>
+                <span className={styles.kidsScreenIcon}>🎮</span>
+                <span className={styles.kidsScreenText}>Kids Screen</span>
+              </button>
             </section>
           )}
         </div>

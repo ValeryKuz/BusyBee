@@ -84,26 +84,6 @@ export const Events = () => {
           </div>
         )}
 
-        {upcomingEvents.length > 0 && (
-          <section className={styles.visualSection}>
-            <h2 className={styles.sectionTitle}>Coming Up Next!</h2>
-            <div className={styles.visualTimeline}>
-              {upcomingEvents.slice(0, 5).map((event, index) => (
-                <div
-                  key={event.id}
-                  className={styles.timelineItem}
-                  style={{ '--delay': `${index * 0.1}s` }}
-                >
-                  <div className={styles.timelineDot}></div>
-                  <div className={styles.timelineCard}>
-                    <span className={styles.timelineIcon}>{event.icon}</span>
-                    <span className={styles.timelineTitle}>{event.title}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
       </main>
 
       <Modal isOpen={showAddEvent} onClose={() => setShowAddEvent(false)} title="Add Exciting Event">
