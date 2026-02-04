@@ -204,10 +204,6 @@ export const Dashboard = () => {
                   />
                 ))}
               </div>
-              <button className={styles.kidsScreenButton} onClick={() => navigate('/kids')}>
-                <span className={styles.kidsScreenIcon}>🎮</span>
-                <span className={styles.kidsScreenText}>Kids Screen</span>
-              </button>
             </section>
           )}
         </div>
@@ -220,6 +216,12 @@ export const Dashboard = () => {
           </div>
         </div>
       </div>
+
+      {children.length > 0 && (
+        <button className={styles.kidsScreenFab} onClick={() => navigate('/kids')}>
+          <span className={styles.kidsScreenFabIcon}>🎮</span>
+        </button>
+      )}
 
       <main className={styles.main}>
         {upcomingEvents.length > 0 && (

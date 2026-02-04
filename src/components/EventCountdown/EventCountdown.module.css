@@ -54,14 +54,28 @@
   min-width: 0;
 }
 
+.titleRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
 .title {
+  font-family: var(--font-heading);
   font-size: var(--font-size-md);
   font-weight: 700;
   color: var(--color-dark-text);
-  margin-bottom: 2px;
+  margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.date {
+  font-size: var(--font-size-xs);
+  color: var(--color-light-text);
+  white-space: nowrap;
 }
 
 .note {

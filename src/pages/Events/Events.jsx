@@ -12,6 +12,7 @@ export const Events = () => {
   const navigate = useNavigate();
   const { addEvent, deleteEvent, getUpcomingEvents, loading } = useHive();
   const [showAddEvent, setShowAddEvent] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState(null);
   const [newEventTitle, setNewEventTitle] = useState('');
   const [newEventDate, setNewEventDate] = useState('');
   const [newEventIcon, setNewEventIcon] = useState(EVENT_ICONS[0].emoji);
@@ -31,8 +32,15 @@ export const Events = () => {
     }
   };
 
-  const handleDeleteEvent = (id) => {
-    deleteEvent(id);
+  const handleDeleteEvent = (event) => {
+    setEventToDelete(event);
+  };
+
+  const confirmDelete = () => {
+    if (eventToDelete) {
+      deleteEvent(eventToDelete.id);
+      setEventToDelete(null);
+    }
   };
 
   if (loading) {
@@ -74,7 +82,7 @@ export const Events = () => {
                 <EventCountdown event={event} />
                 <button
                   className={styles.deleteButton}
-                  onClick={() => handleDeleteEvent(event.id)}
+                  onClick={() => handleDeleteEvent(event)}
                   aria-label="Delete event"
                 >
                   ✕
@@ -143,6 +151,23 @@ export const Events = () => {
           <Button variant="primary" size="large" fullWidth onClick={handleAddEvent}>
             Add Event 🎉
           </Button>
+        </div>
+      </Modal>
+
+      <Modal isOpen={!!eventToDelete} onClose={() => setEventToDelete(null)} title="Delete Event?">
+        <div className={styles.deleteConfirm}>
+          <span className={styles.deleteIcon}>{eventToDelete?.icon}</span>
+          <p className={styles.deleteText}>
+            Are you sure you want to delete <strong>{eventToDelete?.title}</strong>?
+          </p>
+          <div className={styles.deleteButtons}>
+            <Button variant="ghost" size="medium" onClick={() => setEventToDelete(null)}>
+              Cancel
+            </Button>
+            <Button variant="primary" size="medium" onClick={confirmDelete}>
+              Delete
+            </Button>
+          </div>
         </div>
       </Modal>
     </div>

@@ -1,11 +1,13 @@
 .page {
   min-height: 100vh;
+  min-height: 100dvh;
   padding: var(--spacing-lg);
   max-width: 1400px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .addForm {
@@ -56,6 +58,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
+  margin-top: var(--spacing-lg);
+  width: 100%;
 }
 
 .section {
@@ -87,6 +91,7 @@
   gap: var(--spacing-xl);
   padding: var(--spacing-md) 0;
   align-items: stretch;
+  position: relative;
 }
 
 .topRowLeft {
@@ -101,6 +106,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-sm);
 }
 
 .childrenSection {
@@ -496,31 +502,66 @@
   color: white;
 }
 
-/* Tablet Landscape and Desktop - fit to screen */
+/* Tablet Landscape and Desktop - fit to screen height */
 @media (min-width: 768px) and (orientation: landscape) {
   .page {
-    padding: var(--spacing-md);
     height: 100vh;
-    max-height: 100vh;
+    height: 100dvh;
     overflow: hidden;
+    padding: var(--spacing-md);
+  }
+
+  .header {
+    flex-shrink: 0;
+    padding-bottom: var(--spacing-sm);
   }
 
   .topRow {
     flex: 1;
     min-height: 0;
+    padding: var(--spacing-sm) 0;
+    gap: var(--spacing-md);
   }
 
   .topRowLeft,
   .topRowRight {
-    overflow: visible;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .childrenSection {
+    min-height: 0;
+    overflow: hidden;
   }
 
   .childrenGrid {
     gap: var(--spacing-sm);
+    overflow-y: auto;
+    max-height: 100%;
+  }
+
+  .dailyFunCard {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .dailyFunContent {
+    overflow: hidden;
+  }
+
+  .dailyFunEmoji {
+    font-size: clamp(1.5rem, 8vh, 3rem);
+  }
+
+  .dailyFunLottie {
+    width: clamp(50px, 12vh, 100px);
+    height: clamp(50px, 12vh, 100px);
   }
 
   .main {
     flex-shrink: 0;
+    margin-top: var(--spacing-sm);
+    gap: var(--spacing-sm);
   }
 
   .sectionTitle {
@@ -530,34 +571,89 @@
 
   .eventsList {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--spacing-md);
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-sm);
   }
 
   .title {
-    font-size: 1.5rem;
+    font-size: clamp(1.2rem, 3vh, 1.8rem);
   }
 
+  .childrenSection {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  .childrenGrid {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: stretch;
+    align-items: stretch;
+    padding: var(--spacing-sm);
+    overflow: visible;
+  }
+
+  .sectionTitle {
+    flex-shrink: 0;
+  }
+
+  .dailyFunCard {
+    flex: 1;
+  }
+
+  .emptyState {
+    height: auto;
+    flex: 1;
+    padding: var(--spacing-md);
+  }
+
+  .emptyIcon {
+    font-size: clamp(2rem, 8vh, 4rem);
+  }
 }
 
-/* Large tablets and desktops */
+/* Larger landscape screens - more breathing room */
 @media (min-width: 1024px) and (orientation: landscape) {
   .page {
     padding: var(--spacing-lg);
+  }
+
+  .topRow {
+    gap: var(--spacing-lg);
   }
 
   .childrenGrid {
     gap: var(--spacing-md);
   }
 
-  .title {
-    font-size: 1.8rem;
-  }
-
   .eventsList {
-    display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--spacing-md);
+  }
+}
+
+/* Taller landscape screens (1080px+ height) */
+@media (min-width: 768px) and (min-height: 900px) and (orientation: landscape) {
+  .topRow {
+    padding: var(--spacing-md) 0;
+  }
+
+  .main {
+    margin-top: var(--spacing-md);
+  }
+
+  .dailyFunEmoji {
+    font-size: clamp(2rem, 10vh, 4rem);
+  }
+
+  .dailyFunLottie {
+    width: clamp(60px, 15vh, 120px);
+    height: clamp(60px, 15vh, 120px);
   }
 }
 
@@ -567,7 +663,7 @@
   justify-content: center;
   gap: var(--spacing-sm);
   width: 100%;
-  margin-top: auto;
+  margin-top: var(--spacing-lg);
   padding: var(--spacing-md) var(--spacing-lg);
   background: linear-gradient(135deg, #FFE5EC 0%, #E0F4FF 50%, #E5FFE0 100%);
   border: 3px solid var(--color-honey);
@@ -647,6 +743,34 @@
   }
 }
 
+/* Tablet portrait and smaller screens */
+@media (max-width: 1000px) {
+  .topRow {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: stretch;
+  }
+
+  .topRowLeft,
+  .topRowRight {
+    width: 100%;
+    flex: none;
+  }
+
+  .childrenSection {
+    flex: none;
+  }
+
+  .dailyFunCard {
+    min-height: 180px;
+    flex: none;
+  }
+
+  .kidsScreenButton {
+    margin-top: var(--spacing-md);
+  }
+}
+
 /* Mobile */
 @media (max-width: 600px) {
   .page {
@@ -674,5 +798,75 @@
 
   .title {
     font-size: var(--font-size-xl);
+  }
+
+  .kidsScreenButton {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .kidsScreenIcon {
+    font-size: 1.5rem;
+  }
+
+  .kidsScreenText {
+    font-size: var(--font-size-md);
+  }
+}
+
+/* Floating Kids Screen Button */
+.kidsScreenFab {
+  position: fixed;
+  bottom: var(--spacing-sm);
+  right: var(--spacing-sm);
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FFE5EC 0%, #E0F4FF 50%, #E5FFE0 100%);
+  border: 3px solid var(--color-honey);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+  z-index: 50;
+}
+
+.kidsScreenFab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+.kidsScreenFab:active {
+  transform: scale(0.95);
+}
+
+.kidsScreenFabIcon {
+  font-size: 1.8rem;
+}
+
+@media (min-width: 768px) {
+  .kidsScreenFab {
+    bottom: var(--spacing-md);
+    right: var(--spacing-md);
+    width: 64px;
+    height: 64px;
+  }
+
+  .kidsScreenFabIcon {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .kidsScreenFab {
+    bottom: var(--spacing-md);
+    right: var(--spacing-md);
+    width: 70px;
+    height: 70px;
+  }
+
+  .kidsScreenFabIcon {
+    font-size: 2.2rem;
   }
 }

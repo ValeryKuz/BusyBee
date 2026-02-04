@@ -72,8 +72,88 @@
   color: var(--color-dark-text);
 }
 
-/* Larger screens */
-@media (min-width: 1024px) {
+/* Tablet landscape - compact cards */
+@media (min-width: 768px) and (orientation: landscape) {
+  .card {
+    min-width: 90px;
+    height: calc(100% - var(--spacing-sm));
+    margin: var(--spacing-xs) 0;
+    padding: var(--spacing-sm);
+    gap: var(--spacing-xs);
+    justify-content: center;
+  }
+
+  .avatarWrapper {
+    width: clamp(40px, 8vh, 70px);
+    height: clamp(40px, 8vh, 70px);
+  }
+
+  .avatar {
+    font-size: clamp(1.4rem, 5vh, 2.5rem);
+  }
+
+  .name {
+    font-size: clamp(0.75rem, 2vh, 1.125rem);
+  }
+
+  .honeyBadge {
+    padding: 2px var(--spacing-xs);
+  }
+
+  .honeyIcon {
+    font-size: clamp(0.7rem, 1.8vh, 1rem);
+  }
+
+  .honeyCount {
+    font-size: clamp(0.65rem, 1.6vh, 0.875rem);
+  }
+}
+
+/* Larger landscape screens */
+@media (min-width: 1024px) and (orientation: landscape) {
+  .card {
+    min-width: 100px;
+    padding: var(--spacing-md);
+  }
+
+  .avatarWrapper {
+    width: clamp(50px, 10vh, 80px);
+    height: clamp(50px, 10vh, 80px);
+  }
+
+  .avatar {
+    font-size: clamp(1.8rem, 6vh, 3rem);
+  }
+
+  .name {
+    font-size: clamp(0.875rem, 2vh, 1.125rem);
+  }
+}
+
+/* Portrait and mobile */
+@media (orientation: portrait), (max-width: 767px) {
+  .card {
+    min-width: 100px;
+    padding: var(--spacing-md);
+    gap: var(--spacing-xs);
+  }
+
+  .avatarWrapper {
+    width: 50px;
+    height: 50px;
+  }
+
+  .avatar {
+    font-size: 1.8rem;
+  }
+
+  .name {
+    font-size: var(--font-size-md);
+  }
+}
+
+/* Large portrait screens */
+@media (min-width: 1024px) and (orientation: portrait) {
   .card {
     min-width: 120px;
     padding: var(--spacing-lg);

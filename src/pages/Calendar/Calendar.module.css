@@ -195,12 +195,30 @@
 
 .dayEvents {
   display: flex;
+  flex-direction: column;
   gap: 2px;
-  flex-wrap: wrap;
+}
+
+.eventItem {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  overflow: hidden;
 }
 
 .eventIcon {
-  font-size: 1rem;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.eventTitle {
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-dark-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .activityIcons {

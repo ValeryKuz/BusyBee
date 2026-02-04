@@ -1,5 +1,6 @@
 .page {
   height: 100vh;
+  height: 100dvh;
   padding: var(--spacing-lg);
   display: flex;
   flex-direction: column;
@@ -276,11 +277,152 @@
   color: var(--color-dark-text);
 }
 
-@media (max-width: 600px), (max-height: 700px) and (orientation: portrait) {
+/* Tablet Landscape - 6x2 grid, compact header */
+@media (min-width: 768px) and (orientation: landscape) {
+  .page {
+    padding: var(--spacing-md);
+  }
+
+  .selectScreen {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    gap: var(--spacing-lg);
+  }
+
+  .selectScreen > :first-child {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .title {
+    font-size: clamp(1.5rem, 4vh, 2.5rem);
+  }
+
+  .avatarGrid {
+    gap: var(--spacing-md);
+  }
+
+  .avatarButton {
+    padding: var(--spacing-md);
+    min-width: auto;
+    width: clamp(100px, 15vh, 150px);
+  }
+
+  .avatar {
+    font-size: clamp(2.5rem, 8vh, 4rem);
+  }
+
+  .name {
+    font-size: clamp(0.875rem, 2vh, 1.125rem);
+  }
+
+  .activityScreen {
+    max-width: 100%;
+    padding: 0 var(--spacing-md);
+  }
+
+  .backButton {
+    position: static;
+    flex-shrink: 0;
+  }
+
+  .header {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin: 0;
+    padding: var(--spacing-sm) 0;
+    width: 100%;
+  }
+
+  .selectedAvatar {
+    font-size: clamp(2rem, 6vh, 3.5rem);
+    animation: none;
+  }
+
+  .greeting {
+    font-size: clamp(1.2rem, 3vh, 2rem);
+  }
+
+  .subtitle {
+    font-size: clamp(0.875rem, 2vh, 1.125rem);
+    margin-left: auto;
+  }
+
+  .activitiesGrid {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+
+  .activityButton {
+    padding: var(--spacing-sm);
+  }
+
+  .activityIcon {
+    font-size: clamp(1.8rem, 6vh, 3rem);
+  }
+
+  .activityLabel {
+    font-size: clamp(0.7rem, 1.8vh, 1rem);
+  }
+
+  .feedbackContent {
+    padding: var(--spacing-xl);
+  }
+
+  .feedbackIcon {
+    font-size: clamp(3rem, 12vh, 5rem);
+  }
+
+  .feedbackText {
+    font-size: clamp(1rem, 3vh, 1.5rem);
+  }
+}
+
+/* Larger landscape screens */
+@media (min-width: 1024px) and (orientation: landscape) {
+  .page {
+    padding: var(--spacing-lg);
+  }
+
+  .activitiesGrid {
+    gap: var(--spacing-lg);
+    max-width: 1400px;
+  }
+
+  .avatarButton {
+    width: clamp(120px, 18vh, 180px);
+  }
+}
+
+/* Taller landscape screens (900px+ height) */
+@media (min-width: 768px) and (min-height: 900px) and (orientation: landscape) {
+  .activityIcon {
+    font-size: clamp(2.5rem, 8vh, 4rem);
+  }
+
+  .activityLabel {
+    font-size: clamp(0.875rem, 2vh, 1.125rem);
+  }
+
+  .selectedAvatar {
+    font-size: clamp(2.5rem, 8vh, 4rem);
+  }
+}
+
+/* Small screens and portrait - allow scroll */
+@media (max-width: 767px), (orientation: portrait) {
   .page {
     padding: var(--spacing-sm);
     height: auto;
     min-height: 100vh;
+    min-height: 100dvh;
     overflow: auto;
   }
 

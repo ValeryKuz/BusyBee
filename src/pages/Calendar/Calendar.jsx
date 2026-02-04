@@ -162,9 +162,10 @@ export const Calendar = () => {
             {dayEvents.length > 0 && (
               <div className={styles.dayEvents}>
                 {dayEvents.slice(0, 2).map((event) => (
-                  <span key={event.id} className={styles.eventIcon} title={event.title}>
-                    {event.icon}
-                  </span>
+                  <div key={event.id} className={styles.eventItem}>
+                    <span className={styles.eventIcon}>{event.icon}</span>
+                    <span className={styles.eventTitle}>{event.title}</span>
+                  </div>
                 ))}
               </div>
             )}

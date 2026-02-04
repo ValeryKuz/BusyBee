@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { differenceInDays, parseISO } from 'date-fns';
+import { differenceInDays, parseISO, format } from 'date-fns';
 import styles from './EventCountdown.module.css';
 
 export const EventCountdown = ({ event }) => {
@@ -57,7 +57,10 @@ export const EventCountdown = ({ event }) => {
         <span className={styles.icon}>{event.icon}</span>
       </div>
       <div className={styles.content}>
-        <h3 className={styles.title}>{event.title}</h3>
+        <div className={styles.titleRow}>
+          <h3 className={styles.title}>{event.title}</h3>
+          <span className={styles.date}>{format(eventDate, 'MMM d, yyyy')}</span>
+        </div>
         {event.note && <p className={styles.note}>{event.note}</p>}
         <div className={styles.countdown}>
           {renderMoons()}
