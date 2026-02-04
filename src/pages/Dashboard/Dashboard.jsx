@@ -17,6 +17,7 @@ export const Dashboard = () => {
     children,
     addChild,
     deleteChild,
+    addBirthday,
     getUpcomingEvents,
     getChildTodayHoney,
     getChildTotalHoney,
@@ -31,6 +32,7 @@ export const Dashboard = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [newChildName, setNewChildName] = useState('');
   const [newChildAvatar, setNewChildAvatar] = useState(ANIMAL_AVATARS[0].emoji);
+  const [newChildBirthday, setNewChildBirthday] = useState('');
 
   const selectedChild = children.find((c) => c.id === selectedChildId) || null;
   const upcomingEvents = getUpcomingEvents().slice(0, 3);
@@ -117,8 +119,13 @@ export const Dashboard = () => {
   const handleAddChild = async () => {
     if (newChildName.trim()) {
       await addChild(newChildName.trim(), newChildAvatar);
+      if (newChildBirthday) {
+        const monthDay = newChildBirthday.slice(5);
+        await addBirthday(newChildName.trim(), monthDay, '🎂');
+      }
       setNewChildName('');
       setNewChildAvatar(ANIMAL_AVATARS[0].emoji);
+      setNewChildBirthday('');
       setShowAddChild(false);
     }
   };
@@ -253,6 +260,15 @@ export const Dashboard = () => {
               value={newChildName}
               onChange={(e) => setNewChildName(e.target.value)}
               autoFocus
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Birthday</label>
+            <input
+              type="date"
+              className={styles.input}
+              value={newChildBirthday}
+              onChange={(e) => setNewChildBirthday(e.target.value)}
             />
           </div>
           <div className={styles.formGroup}>
