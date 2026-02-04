@@ -5,13 +5,17 @@ import { BEHAVIOR_ICONS, ENTRY_TYPES } from '../../utils/constants';
 import styles from './BehaviorButtons.module.css';
 
 export const BehaviorButtons = ({ childId }) => {
-  const { addEntry } = useHive();
+  const { addEntry, addFamilyActivity } = useHive();
   const [activeTab, setActiveTab] = useState('good');
   const [lastAdded, setLastAdded] = useState(null);
 
   const handleIconClick = (item, type) => {
-    addEntry(childId, type, item.emoji);
-    setLastAdded({ ...item, type });
+    if (activeTab === 'family') {
+      addFamilyActivity(item.emoji);
+    } else {
+      addEntry(childId, type, item.emoji);
+    }
+    setLastAdded({ ...item, type: activeTab });
     setTimeout(() => setLastAdded(null), 1500);
   };
 
@@ -30,6 +34,7 @@ export const BehaviorButtons = ({ childId }) => {
   const getFeedbackText = (item) => {
     if (item.type === 'good') return `${item.label} +5 🍯`;
     if (item.type === 'bad') return `${item.label} -2 🍯`;
+    if (item.type === 'family') return `Family ${item.label}!`;
     return `${item.label} logged!`;
   };
 
@@ -41,7 +46,7 @@ export const BehaviorButtons = ({ childId }) => {
           onClick={() => setActiveTab('good')}
         >
           <span className={styles.tabIcon}>⭐</span>
-          <span className={styles.tabLabel}>Good Bee!</span>
+          <span className={styles.tabLabel}>Good!</span>
         </button>
         <button
           className={`${styles.tab} ${activeTab === 'bad' ? styles.tabActive : ''}`}
@@ -56,6 +61,13 @@ export const BehaviorButtons = ({ childId }) => {
         >
           <span className={styles.tabIcon}>🎯</span>
           <span className={styles.tabLabel}>Activity</span>
+        </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'family' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('family')}
+        >
+          <span className={styles.tabIcon}>👨‍👩‍👧</span>
+          <span className={styles.tabLabel}>Family</span>
         </button>
       </div>
 
@@ -73,7 +85,7 @@ export const BehaviorButtons = ({ childId }) => {
       </div>
 
       {lastAdded && (
-        <div className={`${styles.feedback} ${styles[lastAdded.type]}`}>
+        <div className={`${styles.feedback} ${styles[lastAdded.type] || styles.activity}`}>
           <span className={styles.feedbackIcon}>{lastAdded.emoji}</span>
           <span className={styles.feedbackText}>{getFeedbackText(lastAdded)}</span>
         </div>
