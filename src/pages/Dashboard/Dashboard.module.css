@@ -507,23 +507,11 @@
 
   .topRowLeft,
   .topRowRight {
-    overflow: hidden;
-  }
-
-  .childrenSection {
-    height: 100%;
+    overflow: visible;
   }
 
   .childrenGrid {
     gap: var(--spacing-sm);
-  }
-
-  .dailyFunSection {
-    height: 100%;
-  }
-
-  .dailyFunCard {
-    height: 100%;
   }
 
   .main {
