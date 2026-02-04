@@ -176,15 +176,13 @@ export const Dashboard = () => {
       <div className={styles.topRow}>
         <div className={styles.topRowLeft}>
           {children.length === 0 ? (
-            <section className={styles.section}>
-              <div className={styles.emptyState}>
-                <span className={styles.emptyIcon}>🐝</span>
-                <p className={styles.emptyText}>No little bees yet!</p>
-                <Button variant="primary" size="large" onClick={() => setShowAddChild(true)}>
-                  Add your first bee
-                </Button>
-              </div>
-            </section>
+            <div className={styles.emptyState}>
+              <span className={styles.emptyIcon}>🐝</span>
+              <p className={styles.emptyText}>No little bees yet!</p>
+              <Button variant="primary" size="large" onClick={() => setShowAddChild(true)}>
+                Add your first bee
+              </Button>
+            </div>
           ) : (
             <section className={`${styles.section} ${styles.childrenSection}`}>
               <h2 className={styles.sectionTitle}>Little Bees</h2>
@@ -203,14 +201,12 @@ export const Dashboard = () => {
           )}
         </div>
         <div className={styles.topRowRight}>
-          <section className={`${styles.section} ${styles.dailyFunSection}`}>
-            <div className={styles.dailyFunCard}>
-              <h3 className={styles.dailyFunTitle}>{getDailyFunTitle()}</h3>
-              <div className={styles.dailyFunContent}>
-                {renderDailyFunContent()}
-              </div>
+          <div className={styles.dailyFunCard}>
+            <h3 className={styles.dailyFunTitle}>{getDailyFunTitle()}</h3>
+            <div className={styles.dailyFunContent}>
+              {renderDailyFunContent()}
             </div>
-          </section>
+          </div>
         </div>
       </div>
 
