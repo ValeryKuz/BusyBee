@@ -1,0 +1,11 @@
+export { default as antAnimation } from './ant.json';
+export { default as babyChickAnimation } from './baby-chick.json';
+export { default as batAnimation } from './bat.json';
+export { default as beeAnimation } from './bee.json';
+export { default as birdAnimation } from './bird.json';
+export { default as blowfishAnimation } from './blowfish.json';
+export { default as chimpanzeeAnimation } from './chimpanzee.json';
+export { default as roosterAnimation } from './rooster.json';
+export { default as serviceDogAnimation } from './service-dog.json';
+export { default as sharkAnimation } from './shark.json';
+export { default as tRexAnimation } from './t-rex.json';
