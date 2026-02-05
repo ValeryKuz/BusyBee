@@ -55,8 +55,10 @@ export const Kids = () => {
           ←
         </button>
         <div className={styles.selectScreen}>
-          <BeeMascot size="medium" animate />
-          <h1 className={styles.title}>Who are you?</h1>
+          <div className={styles.selectHeader}>            
+            <BeeMascot size="medium" animate />
+            <h1 className={styles.title}>Who are you?</h1>
+          </div>
           <div className={styles.avatarGrid}>
             {children.map((child) => (
               <button

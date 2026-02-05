@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   startOfMonth,
@@ -20,7 +20,24 @@ import styles from './Calendar.module.css';
 
 export const Calendar = () => {
   const navigate = useNavigate();
-  const { children, entries, events, addEntry, addFamilyActivity, deleteEntry, addEvent, birthdays, addBirthday, deleteBirthday, loading } = useHive();
+  const { 
+    children, 
+    entries, 
+    events, 
+    addEntry, 
+    addFamilyActivity, 
+    deleteEntry, 
+    addEvent, 
+    birthdays, 
+    addBirthday, 
+    deleteBirthday, 
+    getChildMonthlyHoney, 
+    settings,
+    setShowHolidays,
+    loadHolidaysForYear,
+    getHolidaysForDate,
+    loading 
+  } = useHive();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [showAddEntry, setShowAddEntry] = useState(false);
@@ -33,6 +50,13 @@ export const Calendar = () => {
   const [birthdayName, setBirthdayName] = useState('');
 
   const today = new Date();
+
+  useEffect(() => {
+    if (settings.showHolidays) {
+      const year = format(currentMonth, 'yyyy');
+      loadHolidaysForYear(year);
+    }
+  }, [currentMonth, settings.showHolidays, loadHolidaysForYear]);
 
   const getEventsForDate = (date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
@@ -134,19 +158,28 @@ export const Calendar = () => {
         const dayEntries = getEntriesForDate(day);
         const dayActivities = dayEntries.filter((e) => e.type === 'activity' || e.type === 'family_activity');
         const dailyHoney = getDailyHoneyByChild(day);
+        const dayHolidays = settings.showHolidays ? getHolidaysForDate(format(day, 'yyyy-MM-dd')) : [];
         const isCurrentMonth = isSameMonth(day, monthStart);
         const isToday = isSameDay(day, today);
         const isSelected = selectedDate && isSameDay(day, selectedDate);
+        const isHoliday = dayHolidays.length > 0;
 
         days.push(
           <div
             key={day.toString()}
             onClick={() => isCurrentMonth && setSelectedDate(cloneDay)}
-            className={`${styles.cell} ${!isCurrentMonth ? styles.disabled : ''} ${isToday ? styles.today : ''} ${isSelected ? styles.selected : ''}`}
+            className={`${styles.cell} ${!isCurrentMonth ? styles.disabled : ''} ${isToday ? styles.today : ''} ${isSelected ? styles.selected : ''} ${isHoliday ? styles.holiday : ''}`}
           >
             <span className={`${styles.dayNumber} ${isToday ? styles.todayNumber : ''}`}>
               {format(day, 'd')}
             </span>
+
+            {dayHolidays.length > 0 && (
+              <div className={styles.holidayPreview}>
+                <span className={styles.holidayFlag}>🇮🇱</span>
+                <span className={styles.holidayName}>{dayHolidays[0].name}</span>
+              </div>
+            )}
 
             {dayBirthdays.length > 0 && (
               <div className={styles.birthdayIcons}>
@@ -221,6 +254,7 @@ export const Calendar = () => {
     const dayBirthdays = getDayBirthdays(selectedDate);
     const dayEntries = getEntriesForDate(selectedDate);
     const dailyHoney = getDailyHoneyByChild(selectedDate);
+    const dayHolidays = settings.showHolidays ? getHolidaysForDate(format(selectedDate, 'yyyy-MM-dd')) : [];
 
     return (
       <Modal 
@@ -229,6 +263,19 @@ export const Calendar = () => {
         title={format(selectedDate, 'EEEE, MMMM d')}
       >
         <div className={styles.dateDetailsContent}>
+          {dayHolidays.length > 0 && (
+            <div className={styles.detailsSection}>
+              <p className={styles.detailsLabel}>🇮🇱 Israeli Holidays</p>
+              <div className={styles.detailsList}>
+                {dayHolidays.map((holiday, idx) => (
+                  <span key={idx} className={styles.holidayItem}>
+                    {holiday.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {dayBirthdays.length > 0 && (
             <div className={styles.detailsSection}>
               <p className={styles.detailsLabel}>🎂 Birthdays</p>
@@ -368,7 +415,13 @@ export const Calendar = () => {
             ›
           </button>
         </div>
-        <div style={{ width: '70px' }} />
+        <button 
+          className={`${styles.holidayToggle} ${settings.showHolidays ? styles.holidayToggleActive : ''}`}
+          onClick={() => setShowHolidays(!settings.showHolidays)}
+          title="Show Israeli Holidays"
+        >
+          🇮🇱
+        </button>
       </div>
 
       <div className={styles.calendar}>
@@ -379,6 +432,27 @@ export const Calendar = () => {
         </div>
         {renderCells()}
       </div>
+
+      {children.length > 0 && (
+        <div className={styles.monthlyStats}>
+          <h3 className={styles.monthlyStatsTitle}>Monthly Totals</h3>
+          <div className={styles.monthlyStatsGrid}>
+            {children.map((child) => {
+              const yearMonth = format(currentMonth, 'yyyy-MM');
+              const monthlyHoney = getChildMonthlyHoney(child.id, yearMonth);
+              return (
+                <div key={child.id} className={styles.monthlyStatCard}>
+                  <span className={styles.monthlyStatAvatar}>{child.avatar}</span>
+                  <span className={styles.monthlyStatName}>{child.name}</span>
+                  <span className={`${styles.monthlyStatHoney} ${monthlyHoney >= 0 ? styles.positive : styles.negative}`}>
+                    {monthlyHoney > 0 ? '+' : ''}{monthlyHoney} 🍯
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {renderDateDetailsModal()}
 

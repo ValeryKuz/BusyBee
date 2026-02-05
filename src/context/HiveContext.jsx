@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import * as db from '../services/database';
+import { fetchIsraeliHolidays } from '../services/holidays';
 import { getLocalDate } from '../utils/dateUtils';
 import {
   HONEY_VALUES,
@@ -48,7 +49,8 @@ export const HiveProvider = ({ children: childrenProp }) => {
   const [entries, setEntries] = useState([]);
   const [events, setEvents] = useState([]);
   const [birthdays, setBirthdays] = useState([]);
-  const [settings, setSettings] = useState({ dailyFunCategory: 'animal' });
+  const [holidays, setHolidays] = useState({});
+  const [settings, setSettings] = useState({ dailyFunCategory: 'animal', showHolidays: false });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -56,19 +58,23 @@ export const HiveProvider = ({ children: childrenProp }) => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [childrenData, entriesData, eventsData, birthdaysData, dailyFunCategory] = await Promise.all([
+        const [childrenData, entriesData, eventsData, birthdaysData, dailyFunCategory, showHolidays] = await Promise.all([
           db.fetchChildren(),
           db.fetchEntries(),
           db.fetchEvents(),
           db.fetchBirthdays(),
           db.getSetting('dailyFunCategory'),
+          db.getSetting('showHolidays'),
         ]);
 
         setChildren(childrenData);
         setEntries(entriesData.map(mapEntryFromDb));
         setEvents(eventsData.map(mapEventFromDb));
         setBirthdays(birthdaysData.map(mapBirthdayFromDb));
-        setSettings({ dailyFunCategory: dailyFunCategory || 'animal' });
+        setSettings({ 
+          dailyFunCategory: dailyFunCategory || 'animal',
+          showHolidays: showHolidays === 'true',
+        });
       } catch (err) {
         console.error('Failed to load data:', err);
         setError(err.message);
@@ -239,6 +245,15 @@ export const HiveProvider = ({ children: childrenProp }) => {
     [entries]
   );
 
+  const getChildMonthlyHoney = useCallback(
+    (childId, yearMonth) => {
+      return entries
+        .filter((e) => e.childId === childId && e.date.startsWith(yearMonth))
+        .reduce((sum, e) => sum + e.honey, 0);
+    },
+    [entries]
+  );
+
   const getUpcomingEvents = useCallback(() => {
     const today = getLocalDate();
     return events
@@ -299,11 +314,39 @@ export const HiveProvider = ({ children: childrenProp }) => {
     return { category, content: contentArray[index] };
   }, [settings.dailyFunCategory]);
 
+  const setShowHolidays = useCallback(async (show) => {
+    try {
+      await db.setSetting('showHolidays', show ? 'true' : 'false');
+      setSettings((prev) => ({ ...prev, showHolidays: show }));
+    } catch (err) {
+      console.error('Failed to set show holidays:', err);
+      setError(err.message);
+    }
+  }, []);
+
+  const loadHolidaysForYear = useCallback(async (year) => {
+    if (holidays[year]) return holidays[year];
+    
+    const yearHolidays = await fetchIsraeliHolidays(year);
+    setHolidays((prev) => ({ ...prev, [year]: yearHolidays }));
+    return yearHolidays;
+  }, [holidays]);
+
+  const getHolidaysForDate = useCallback(
+    (date) => {
+      const year = date.slice(0, 4);
+      const yearHolidays = holidays[year] || [];
+      return yearHolidays.filter((h) => h.date === date);
+    },
+    [holidays]
+  );
+
   const value = {
     children,
     entries,
     events,
     birthdays,
+    holidays,
     settings,
     loading,
     error,
@@ -324,11 +367,15 @@ export const HiveProvider = ({ children: childrenProp }) => {
     getEntriesForDate,
     getChildTodayHoney,
     getChildTotalHoney,
+    getChildMonthlyHoney,
     getUpcomingEvents,
     getBirthdaysForDate,
     getUpcomingBirthdays,
     setDailyFunCategory,
     getDailyFunContent,
+    setShowHolidays,
+    loadHolidaysForYear,
+    getHolidaysForDate,
   };
 
   return <HiveContext.Provider value={value}>{childrenProp}</HiveContext.Provider>;

@@ -78,6 +78,94 @@
   text-align: center;
 }
 
+.holidayToggle {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  border: 2px solid transparent;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-soft);
+  opacity: 0.7;
+}
+
+.holidayToggle:hover {
+  transform: scale(1.1);
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.holidayToggleActive {
+  opacity: 1;
+  border-color: var(--color-lavender);
+  background: linear-gradient(135deg, rgba(252, 255, 166, 0.6), rgba(193, 255, 215, 0.6));
+  backdrop-filter: blur(8px);
+}
+
+.monthlyStats {
+  background: var(--color-white);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-soft);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.monthlyStatsTitle {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-dark-text);
+  margin: 0 0 var(--spacing-sm) 0;
+  text-align: center;
+}
+
+.monthlyStatsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: center;
+}
+
+.monthlyStatCard {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: linear-gradient(135deg, #FCFFA6 0%, #C1FFD7 100%);
+  border-radius: var(--radius-medium);
+}
+
+.monthlyStatAvatar {
+  font-size: 1.5rem;
+}
+
+.monthlyStatName {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-dark-text);
+}
+
+.monthlyStatHoney {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.monthlyStatHoney.positive {
+  color: #4CAF50;
+}
+
+.monthlyStatHoney.negative {
+  color: var(--color-coral);
+}
+
 .calendar {
   background: var(--color-white);
   border-radius: var(--radius-large);
@@ -106,6 +194,7 @@
 }
 
 .cell {
+  position: relative;
   min-height: 70px;
   padding: var(--spacing-xs);
   border: 1px solid #E0FFEB;
@@ -148,6 +237,39 @@
   background: rgba(181, 222, 255, 0.3);
   border-color: #B5DEFF;
   box-shadow: inset 0 0 0 2px #B5DEFF;
+}
+
+.cell.holiday {
+  background: linear-gradient(135deg, rgba(202, 184, 255, 0.15), rgba(181, 222, 255, 0.15));
+}
+
+.cell.holiday.today {
+  background: linear-gradient(135deg, rgba(252, 255, 166, 0.4), rgba(202, 184, 255, 0.2));
+}
+
+.holidayPreview {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+  padding: 2px 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(202, 184, 255, 0.4);
+}
+
+.holidayFlag {
+  font-size: 0.7rem;
+}
+
+.holidayName {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--color-lavender-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 55px;
 }
 
 .dayNumber {
@@ -296,6 +418,19 @@
   padding: 6px 10px;
   background: #E0FFEB;
   border-radius: var(--radius-medium);
+}
+
+.holidayItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(202, 184, 255, 0.4);
+  border-radius: var(--radius-medium);
+  font-weight: 600;
+  color: var(--color-lavender-dark);
 }
 
 .honeyPositive {

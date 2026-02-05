@@ -41,12 +41,17 @@
   max-width: 600px;
 }
 
+.selectHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
 .title {
   font-family: var(--font-heading);
   font-size: clamp(1.5rem, 6vw, 2.5rem);
   color: var(--color-dark-text);
   margin: 0;
-  text-align: center;
 }
 
 .avatarGrid {
@@ -284,18 +289,10 @@
   }
 
   .selectScreen {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     max-width: 100%;
     gap: var(--spacing-lg);
-  }
-
-  .selectScreen > :first-child {
-    width: 100%;
-    display: flex;
-    justify-content: center;
   }
 
   .title {
