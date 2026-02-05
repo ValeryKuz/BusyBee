@@ -6,7 +6,7 @@ export const fetchIsraeliHolidays = async (year) => {
 
   try {
     const response = await fetch(
-      `https://www.hebcal.com/hebcal?v=1&cfg=json&year=${year}&month=x&i=on&maj=on`
+      `https://www.hebcal.com/hebcal?v=1&cfg=json&year=${year}&month=x&i=on&maj=on&mod=on`
     );
     if (!response.ok) throw new Error('Failed to fetch holidays');
     

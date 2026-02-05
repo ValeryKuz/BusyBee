@@ -18,6 +18,7 @@ export const Dashboard = () => {
     addChild,
     deleteChild,
     addBirthday,
+    birthdays,
     getUpcomingEvents,
     getChildTodayHoney,
     getChildTotalHoney,
@@ -45,6 +46,14 @@ export const Dashboard = () => {
     if (hour < 17) return 'Good afternoon';
     return 'Good evening';
   }
+
+  const getChildBirthday = (childName) => {
+    const birthday = birthdays.find((b) => b.name === childName);
+    if (!birthday) return null;
+    const [month, day] = birthday.date.split('-');
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
+  };
 
   const renderDailyFunContent = () => {
     const { category, content } = dailyFun;
@@ -291,24 +300,27 @@ export const Dashboard = () => {
             <div className={styles.settingsSection}>
               <h3 className={styles.settingsSectionTitle}>🐝 Manage Kids</h3>
               <div className={styles.kidsList}>
-                {children.map((child) => (
-                  <div key={child.id} className={styles.kidsListItem}>
-                    <span className={styles.kidsListAvatar}>{child.avatar}</span>
-                    <span className={styles.kidsListName}>{child.name}</span>
-                    <span className={styles.kidsListHoney}>🍯 {getChildTotalHoney(child.id)}</span>
-                    <button
-                      className={styles.kidsListDelete}
-                      onClick={() => {
-                        if (window.confirm(`Remove ${child.name}? This will delete all their data.`)) {
-                          deleteChild(child.id);
-                          if (selectedChildId === child.id) setSelectedChildId(null);
-                        }
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
+                {children.map((child) => {
+                  const birthday = getChildBirthday(child.name);
+                  return (
+                    <div key={child.id} className={styles.kidsListItem}>
+                      <span className={styles.kidsListAvatar}>{child.avatar}</span>
+                      <span className={styles.kidsListName}>{child.name}</span>
+                      {birthday && <span className={styles.kidsListBirthday}>🎂 {birthday}</span>}
+                      <button
+                        className={styles.kidsListDelete}
+                        onClick={() => {
+                          if (window.confirm(`Remove ${child.name}? This will delete all their data.`)) {
+                            deleteChild(child.id);
+                            if (selectedChildId === child.id) setSelectedChildId(null);
+                          }
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
               <Button variant="accent" size="small" onClick={() => { setShowSettings(false); setShowAddChild(true); }}>
                 + Add Kid

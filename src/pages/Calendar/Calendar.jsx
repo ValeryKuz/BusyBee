@@ -27,7 +27,8 @@ export const Calendar = () => {
     addEntry, 
     addFamilyActivity, 
     deleteEntry, 
-    addEvent, 
+    addEvent,
+    deleteEvent,
     birthdays, 
     addBirthday, 
     deleteBirthday, 
@@ -48,6 +49,8 @@ export const Calendar = () => {
   const [entryNote, setEntryNote] = useState('');
   const [eventTitle, setEventTitle] = useState('');
   const [birthdayName, setBirthdayName] = useState('');
+  const [dayOffEndDate, setDayOffEndDate] = useState('');
+  const [eventParticipants, setEventParticipants] = useState([]);
 
   const today = new Date();
 
@@ -90,13 +93,26 @@ export const Calendar = () => {
     setSelectedIcon(icon);
   };
 
-  const handleAddEntry = () => {
+  const handleAddEntry = async () => {
     if (!selectedDate || !selectedIcon) return;
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
     
     if (entryTab === 'event') {
-      if (eventTitle.trim()) {
-        addEvent(eventTitle.trim(), dateStr, selectedIcon, entryNote);
+      const participantsPrefix = getParticipantsDisplay();
+      const fullNote = participantsPrefix ? `${participantsPrefix}${entryNote ? ' | ' + entryNote : ''}` : entryNote;
+      
+      if (selectedIcon === '🏡' || selectedIcon === '✈️') {
+        const defaultTitle = selectedIcon === '🏡' ? 'Day Off' : 'Trip';
+        const title = eventTitle.trim() || defaultTitle;
+        const endDate = dayOffEndDate ? new Date(dayOffEndDate) : selectedDate;
+        let current = new Date(selectedDate);
+        while (current <= endDate) {
+          const currentDateStr = format(current, 'yyyy-MM-dd');
+          await addEvent(title, currentDateStr, selectedIcon, fullNote);
+          current = addDays(current, 1);
+        }
+      } else if (eventTitle.trim()) {
+        addEvent(eventTitle.trim(), dateStr, selectedIcon, fullNote);
       }
     } else if (entryTab === 'birthday') {
       if (birthdayName.trim()) {
@@ -130,7 +146,38 @@ export const Calendar = () => {
     setEntryNote('');
     setEventTitle('');
     setBirthdayName('');
+    setDayOffEndDate('');
+    setEventParticipants([]);
   };
+
+  const toggleEventParticipant = (participant) => {
+    setEventParticipants((prev) => 
+      prev.includes(participant) 
+        ? prev.filter((p) => p !== participant)
+        : [...prev, participant]
+    );
+  };
+
+  const getParticipantsDisplay = () => {
+    if (eventParticipants.length === 0) return '';
+    return eventParticipants.map((p) => {
+      if (p === 'mom') return '👩';
+      if (p === 'dad') return '👨';
+      if (p === 'family') return '👨‍👩‍👧‍👦';
+      const child = children.find((c) => c.id === p);
+      return child?.avatar || '';
+    }).join(' ');
+  };
+
+  const extractParticipantsFromNote = (note) => {
+    if (!note) return { participants: '', cleanNote: '' };
+    const match = note.match(/^([👩👨👨‍👩‍👧‍👦🧒👦👧🐻🦁🐯🐰🐱🐶🦊🐼🐨🐸🐵🦄🐲🦋🐝🐞🌸🌻🌺💫⭐🌈🎀👑💎🚀⚽🎨🎵🎮📚\s]+)(?:\s*\|\s*)?(.*)$/);
+    if (match) {
+      return { participants: match[1].trim(), cleanNote: match[2] || '' };
+    }
+    return { participants: '', cleanNote: note };
+  };
+
 
   const getIconsForTab = () => {
     if (entryTab === 'good') return BEHAVIOR_ICONS.good;
@@ -194,12 +241,18 @@ export const Calendar = () => {
 
             {dayEvents.length > 0 && (
               <div className={styles.dayEvents}>
-                {dayEvents.slice(0, 2).map((event) => (
-                  <div key={event.id} className={styles.eventItem}>
-                    <span className={styles.eventIcon}>{event.icon}</span>
-                    <span className={styles.eventTitle}>{event.title}</span>
-                  </div>
-                ))}
+                {dayEvents.slice(0, 2).map((event) => {
+                  const { participants } = extractParticipantsFromNote(event.note);
+                  return (
+                    <div key={event.id} className={styles.eventItem}>
+                      <div className={styles.eventIconWrapper}>
+                        {participants && <span className={styles.eventParticipants}>{participants}</span>}
+                        <span className={styles.eventIcon}>{event.icon}</span>
+                      </div>
+                      <span className={styles.eventTitle}>{event.title}</span>
+                    </div>
+                  );
+                })}
               </div>
             )}
 
@@ -307,11 +360,29 @@ export const Calendar = () => {
             <div className={styles.detailsSection}>
               <p className={styles.detailsLabel}>🎉 Events</p>
               <div className={styles.detailsList}>
-                {dayEvents.map((event) => (
-                  <span key={event.id} className={styles.detailItem}>
-                    {event.icon} {event.title}
-                  </span>
-                ))}
+                {dayEvents.map((event) => {
+                  const { participants, cleanNote } = extractParticipantsFromNote(event.note);
+                  return (
+                  <div key={event.id} className={`${styles.activityItem} ${(participants || cleanNote) ? styles.hasNote : ''}`}>
+                    <div className={styles.activityMain}>
+                      <span>{event.icon}</span>
+                      {participants && <span className={styles.eventParticipantsModal}>{participants}</span>}
+                      <span>{event.title}</span>
+                    </div>
+                    {cleanNote && <p className={styles.activityNote}>{cleanNote}</p>}
+                    <button
+                      onClick={() => {
+                        if (window.confirm(`Delete "${event.title}" event?`)) {
+                          deleteEvent(event.id);
+                        }
+                      }}
+                      className={styles.deleteActivityBtn}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -589,37 +660,170 @@ export const Calendar = () => {
                   </button>
                 </div>
 
-                <div className={styles.noteSection}>
-                  <label className={styles.noteLabel}>Event name</label>
-                  <input
-                    type="text"
-                    className={styles.noteInput}
-                    placeholder="Vacation, Birthday, Trip..."
-                    value={eventTitle}
-                    onChange={(e) => setEventTitle(e.target.value)}
-                  />
-                </div>
+                {(selectedIcon === '🏡' || selectedIcon === '✈️') ? (
+                  <>
+                    <div className={styles.noteSection}>
+                      <label className={styles.noteLabel}>Title</label>
+                      <input
+                        type="text"
+                        className={styles.noteInput}
+                        placeholder={selectedIcon === '🏡' ? 'Day Off' : 'Trip'}
+                        value={eventTitle}
+                        onChange={(e) => setEventTitle(e.target.value)}
+                      />
+                    </div>
 
-                <div className={styles.noteSection}>
-                  <label className={styles.noteLabel}>Note (optional)</label>
-                  <textarea
-                    className={styles.noteInput}
-                    placeholder="Any details..."
-                    value={entryNote}
-                    onChange={(e) => setEntryNote(e.target.value)}
-                    rows={2}
-                  />
-                </div>
+                    <div className={styles.dayOffDateRow}>
+                      <div className={styles.dayOffDateGroup}>
+                        <label className={styles.noteLabel}>From</label>
+                        <input
+                          type="date"
+                          className={styles.noteInput}
+                          value={format(selectedDate, 'yyyy-MM-dd')}
+                          disabled
+                        />
+                      </div>
+                      <div className={styles.dayOffDateGroup}>
+                        <label className={styles.noteLabel}>To (optional)</label>
+                        <input
+                          type="date"
+                          className={styles.noteInput}
+                          value={dayOffEndDate}
+                          min={format(selectedDate, 'yyyy-MM-dd')}
+                          onChange={(e) => setDayOffEndDate(e.target.value)}
+                        />
+                      </div>
+                    </div>
 
-                <Button 
-                  variant="primary" 
-                  size="large" 
-                  fullWidth 
-                  onClick={handleAddEntry}
-                  disabled={!eventTitle.trim()}
-                >
-                  Add Event
-                </Button>
+                    <div className={styles.noteSection}>
+                      <label className={styles.noteLabel}>Who? (optional)</label>
+                      <div className={styles.participantsPicker}>
+                        <button
+                          type="button"
+                          className={`${styles.participantBtn} ${eventParticipants.includes('family') ? styles.participantSelected : ''}`}
+                          onClick={() => toggleEventParticipant('family')}
+                        >
+                          👨‍👩‍👧‍👦
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.participantBtn} ${eventParticipants.includes('mom') ? styles.participantSelected : ''}`}
+                          onClick={() => toggleEventParticipant('mom')}
+                        >
+                          👩
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.participantBtn} ${eventParticipants.includes('dad') ? styles.participantSelected : ''}`}
+                          onClick={() => toggleEventParticipant('dad')}
+                        >
+                          👨
+                        </button>
+                        {children.map((child) => (
+                          <button
+                            key={child.id}
+                            type="button"
+                            className={`${styles.participantBtn} ${eventParticipants.includes(child.id) ? styles.participantSelected : ''}`}
+                            onClick={() => toggleEventParticipant(child.id)}
+                          >
+                            {child.avatar}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className={styles.noteSection}>
+                      <label className={styles.noteLabel}>Note (optional)</label>
+                      <textarea
+                        className={styles.noteInput}
+                        placeholder={selectedIcon === '🏡' ? 'Reason for day off...' : 'Trip details...'}
+                        value={entryNote}
+                        onChange={(e) => setEntryNote(e.target.value)}
+                        rows={2}
+                      />
+                    </div>
+
+                    <Button 
+                      variant="primary" 
+                      size="large" 
+                      fullWidth 
+                      onClick={handleAddEntry}
+                    >
+                      {selectedIcon === '🏡' ? 'Add Day Off' : 'Add Trip'}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <div className={styles.noteSection}>
+                      <label className={styles.noteLabel}>Event name</label>
+                      <input
+                        type="text"
+                        className={styles.noteInput}
+                        placeholder="Vacation, Birthday, Trip..."
+                        value={eventTitle}
+                        onChange={(e) => setEventTitle(e.target.value)}
+                      />
+                    </div>
+
+                    <div className={styles.noteSection}>
+                      <label className={styles.noteLabel}>Who? (optional)</label>
+                      <div className={styles.participantsPicker}>
+                        <button
+                          type="button"
+                          className={`${styles.participantBtn} ${eventParticipants.includes('family') ? styles.participantSelected : ''}`}
+                          onClick={() => toggleEventParticipant('family')}
+                        >
+                          👨‍👩‍👧‍👦
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.participantBtn} ${eventParticipants.includes('mom') ? styles.participantSelected : ''}`}
+                          onClick={() => toggleEventParticipant('mom')}
+                        >
+                          👩
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.participantBtn} ${eventParticipants.includes('dad') ? styles.participantSelected : ''}`}
+                          onClick={() => toggleEventParticipant('dad')}
+                        >
+                          👨
+                        </button>
+                        {children.map((child) => (
+                          <button
+                            key={child.id}
+                            type="button"
+                            className={`${styles.participantBtn} ${eventParticipants.includes(child.id) ? styles.participantSelected : ''}`}
+                            onClick={() => toggleEventParticipant(child.id)}
+                          >
+                            {child.avatar}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className={styles.noteSection}>
+                      <label className={styles.noteLabel}>Note (optional)</label>
+                      <textarea
+                        className={styles.noteInput}
+                        placeholder="Any details..."
+                        value={entryNote}
+                        onChange={(e) => setEntryNote(e.target.value)}
+                        rows={2}
+                      />
+                    </div>
+
+                    <Button 
+                      variant="primary" 
+                      size="large" 
+                      fullWidth 
+                      onClick={handleAddEntry}
+                      disabled={!eventTitle.trim()}
+                    >
+                      Add Event
+                    </Button>
+                  </>
+                )}
               </div>
             )
           ) : selectedChildIds.length === 0 && !isFamilyActivity ? (

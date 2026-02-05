@@ -60,6 +60,7 @@ export const BEHAVIOR_ICONS = {
 };
 
 export const EVENT_ICONS = [
+  { emoji: '🏡', label: 'Day Off' },
   { emoji: '🏖️', label: 'Beach' },
   { emoji: '✈️', label: 'Trip' },
   { emoji: '🎂', label: 'Birthday' },

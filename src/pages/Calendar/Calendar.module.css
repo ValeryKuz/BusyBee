@@ -328,9 +328,29 @@
   overflow: hidden;
 }
 
+.eventIconWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.eventParticipants {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.5rem;
+  line-height: 1;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
 .eventIcon {
   font-size: 0.85rem;
-  flex-shrink: 0;
+}
+
+.eventParticipantsModal {
+  font-size: 0.9rem;
+  margin-right: var(--spacing-xs);
 }
 
 .eventTitle {
@@ -547,6 +567,49 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+}
+
+.participantsPicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.participantBtn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(4px);
+  border: 2px solid transparent;
+  border-radius: var(--radius-medium);
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.participantBtn:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.05);
+}
+
+.participantSelected {
+  border-color: var(--color-lavender);
+  background: linear-gradient(135deg, rgba(202, 184, 255, 0.3), rgba(181, 222, 255, 0.3));
+}
+
+.dayOffDateRow {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.dayOffDateGroup {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
 }
 
 .entryTabs {
