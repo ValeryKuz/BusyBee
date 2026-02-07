@@ -26,6 +26,14 @@
 10. **Language Selection** - Allow users to choose app language
 11. **Country Holidays** - Select country for holidays, with option to show/hide in settings
 
+## Bugs
+
+13. ~~**Holiday Toggle Not Working**~~ - Fixed
+
+## Performance
+
+14. **Caching & Data Loading** - Implement caching strategy, optimize initial data load, consider lazy loading for routes
+
 ## Timers
 
 12. **TV Control Timer** - Timer with sand watch visual and ring/alarm at the end

@@ -368,12 +368,12 @@ export const HiveProvider = ({ children: childrenProp }) => {
   }, [settings.dailyFunCategory]);
 
   const setShowHolidays = useCallback(async (show) => {
+    setSettings((prev) => ({ ...prev, showHolidays: show }));
     try {
       await db.setSetting('showHolidays', show ? 'true' : 'false');
-      setSettings((prev) => ({ ...prev, showHolidays: show }));
     } catch (err) {
       console.error('Failed to set show holidays:', err);
-      setError(err.message);
+      setSettings((prev) => ({ ...prev, showHolidays: !show }));
     }
   }, []);
 
