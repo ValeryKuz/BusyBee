@@ -14,11 +14,11 @@ import styles from './Dashboard.module.css';
 export const Dashboard = () => {
   const navigate = useNavigate();
   const {
+    user,
+    signOut,
     children,
     addChild,
     deleteChild,
-    addBirthday,
-    birthdays,
     getUpcomingEvents,
     getChildTodayHoney,
     getChildTotalHoney,
@@ -47,10 +47,9 @@ export const Dashboard = () => {
     return 'Good evening';
   }
 
-  const getChildBirthday = (childName) => {
-    const birthday = birthdays.find((b) => b.name === childName);
+  const formatBirthday = (birthday) => {
     if (!birthday) return null;
-    const [month, day] = birthday.date.split('-');
+    const [, month, day] = birthday.split('-');
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return `${monthNames[parseInt(month) - 1]} ${parseInt(day)}`;
   };
@@ -127,11 +126,7 @@ export const Dashboard = () => {
 
   const handleAddChild = async () => {
     if (newChildName.trim()) {
-      await addChild(newChildName.trim(), newChildAvatar);
-      if (newChildBirthday) {
-        const monthDay = newChildBirthday.slice(5);
-        await addBirthday(newChildName.trim(), monthDay, '🎂');
-      }
+      await addChild(newChildName.trim(), newChildAvatar, newChildBirthday || null);
       setNewChildName('');
       setNewChildAvatar(ANIMAL_AVATARS[0].emoji);
       setNewChildBirthday('');
@@ -300,27 +295,24 @@ export const Dashboard = () => {
             <div className={styles.settingsSection}>
               <h3 className={styles.settingsSectionTitle}>🐝 Manage Kids</h3>
               <div className={styles.kidsList}>
-                {children.map((child) => {
-                  const birthday = getChildBirthday(child.name);
-                  return (
-                    <div key={child.id} className={styles.kidsListItem}>
-                      <span className={styles.kidsListAvatar}>{child.avatar}</span>
-                      <span className={styles.kidsListName}>{child.name}</span>
-                      {birthday && <span className={styles.kidsListBirthday}>🎂 {birthday}</span>}
-                      <button
-                        className={styles.kidsListDelete}
-                        onClick={() => {
-                          if (window.confirm(`Remove ${child.name}? This will delete all their data.`)) {
-                            deleteChild(child.id);
-                            if (selectedChildId === child.id) setSelectedChildId(null);
-                          }
-                        }}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  );
-                })}
+                {children.map((child) => (
+                  <div key={child.id} className={styles.kidsListItem}>
+                    <span className={styles.kidsListAvatar}>{child.avatar}</span>
+                    <span className={styles.kidsListName}>{child.name}</span>
+                    {child.birthday && <span className={styles.kidsListBirthday}>🎂 {formatBirthday(child.birthday)}</span>}
+                    <button
+                      className={styles.kidsListDelete}
+                      onClick={() => {
+                        if (window.confirm(`Remove ${child.name}? This will delete all their data.`)) {
+                          deleteChild(child.id);
+                          if (selectedChildId === child.id) setSelectedChildId(null);
+                        }
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
               </div>
               <Button variant="accent" size="small" onClick={() => { setShowSettings(false); setShowAddChild(true); }}>
                 + Add Kid
@@ -346,6 +338,23 @@ export const Dashboard = () => {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div className={styles.settingsSection}>
+            <h3 className={styles.settingsSectionTitle}>👤 Account</h3>
+            <p className={styles.settingsDescription}>
+              Logged in as {user?.email}
+            </p>
+            <Button 
+              variant="secondary" 
+              size="small" 
+              onClick={async () => {
+                await signOut();
+                setShowSettings(false);
+              }}
+            >
+              🚪 Log Out
+            </Button>
           </div>
         </div>
       </Modal>

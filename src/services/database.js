@@ -1,6 +1,12 @@
 import { supabase } from '../lib/supabase';
 import { getLocalDate } from '../utils/dateUtils';
 
+const getFamilyId = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  return user.id;
+};
+
 export const fetchChildren = async () => {
   const { data, error } = await supabase
     .from('children')
@@ -11,10 +17,11 @@ export const fetchChildren = async () => {
   return data || [];
 };
 
-export const addChild = async (name, avatar) => {
+export const addChild = async (name, avatar, birthday = null) => {
+  const familyId = await getFamilyId();
   const { data, error } = await supabase
     .from('children')
-    .insert([{ name, avatar }])
+    .insert([{ name, avatar, birthday, family_id: familyId }])
     .select()
     .single();
   
@@ -23,9 +30,14 @@ export const addChild = async (name, avatar) => {
 };
 
 export const updateChild = async (id, updates) => {
+  const dbUpdates = {};
+  if (updates.name !== undefined) dbUpdates.name = updates.name;
+  if (updates.avatar !== undefined) dbUpdates.avatar = updates.avatar;
+  if (updates.birthday !== undefined) dbUpdates.birthday = updates.birthday;
+
   const { data, error } = await supabase
     .from('children')
-    .update(updates)
+    .update(dbUpdates)
     .eq('id', id)
     .select()
     .single();
@@ -54,6 +66,7 @@ export const fetchEntries = async () => {
 };
 
 export const addEntry = async (childId, type, icon, date = null, note = '', honey = 0) => {
+  const familyId = await getFamilyId();
   const entryDate = date || getLocalDate();
   const { data, error } = await supabase
     .from('entries')
@@ -63,7 +76,8 @@ export const addEntry = async (childId, type, icon, date = null, note = '', hone
       type,
       icon,
       note,
-      honey
+      honey,
+      family_id: familyId
     }])
     .select()
     .single();
@@ -136,13 +150,15 @@ export const fetchEvents = async () => {
 };
 
 export const addEvent = async (title, date, icon, note = '') => {
+  const familyId = await getFamilyId();
   const { data, error } = await supabase
     .from('events')
     .insert([{
       title,
       event_date: date,
       icon,
-      note
+      note,
+      family_id: familyId
     }])
     .select()
     .single();
@@ -178,59 +194,6 @@ export const deleteEvent = async (id) => {
   if (error) throw error;
 };
 
-export const fetchBirthdays = async () => {
-  const { data, error } = await supabase
-    .from('birthdays')
-    .select('*')
-    .order('month_day', { ascending: true });
-  
-  if (error) throw error;
-  return data || [];
-};
-
-export const addBirthday = async (name, date, icon = '🎂', note = '') => {
-  const { data, error } = await supabase
-    .from('birthdays')
-    .insert([{
-      name,
-      month_day: date,
-      icon,
-      note
-    }])
-    .select()
-    .single();
-  
-  if (error) throw error;
-  return data;
-};
-
-export const updateBirthday = async (id, updates) => {
-  const dbUpdates = {};
-  if (updates.name !== undefined) dbUpdates.name = updates.name;
-  if (updates.date !== undefined) dbUpdates.month_day = updates.date;
-  if (updates.icon !== undefined) dbUpdates.icon = updates.icon;
-  if (updates.note !== undefined) dbUpdates.note = updates.note;
-
-  const { data, error } = await supabase
-    .from('birthdays')
-    .update(dbUpdates)
-    .eq('id', id)
-    .select()
-    .single();
-  
-  if (error) throw error;
-  return data;
-};
-
-export const deleteBirthday = async (id) => {
-  const { error } = await supabase
-    .from('birthdays')
-    .delete()
-    .eq('id', id);
-  
-  if (error) throw error;
-};
-
 export const getSetting = async (key) => {
   const { data, error } = await supabase
     .from('settings')
@@ -243,9 +206,10 @@ export const getSetting = async (key) => {
 };
 
 export const setSetting = async (key, value) => {
+  const familyId = await getFamilyId();
   const { data, error } = await supabase
     .from('settings')
-    .upsert({ key, value }, { onConflict: 'key' })
+    .upsert({ key, value, family_id: familyId }, { onConflict: 'key,family_id' })
     .select()
     .single();
   

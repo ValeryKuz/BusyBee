@@ -1,0 +1,15 @@
+.loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  background: linear-gradient(135deg, var(--color-cream) 0%, var(--color-honey-light) 100%);
+}
+
+.loading p {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  color: var(--color-dark-text);
+}

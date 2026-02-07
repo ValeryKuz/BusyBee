@@ -237,17 +237,45 @@ export const MAGIC_WORDS = [
   { word: 'Twinkle', emoji: '⭐', meaning: 'Shine like a star!' },
 ];
 
-export const KIDS_ACTIVITIES = [
+export const KIDS_ACTIVITY_MODES = [
+  { id: 'morning', emoji: '🌅', label: 'Morning' },
+  { id: 'general', emoji: '⭐', label: 'Anytime' },
+  { id: 'evening', emoji: '🌙', label: 'Evening' },
+];
+
+export const KIDS_ACTIVITIES_MORNING = [
   { emoji: '🦷', label: 'Brushed Teeth' },
-  { emoji: '🧹', label: 'Cleaned Room' },
-  { emoji: '📚', label: 'Read a Book' },
   { emoji: '🛏️', label: 'Made Bed' },
-  { emoji: '🍽️', label: 'Set Table' },
   { emoji: '👕', label: 'Got Dressed' },
   { emoji: '🎒', label: 'Packed Bag' },
+  { emoji: '🥣', label: 'Ate Breakfast' },
+  { emoji: '🧴', label: 'Washed Face' },
+  { emoji: '👟', label: 'Put on Shoes' },
+  { emoji: '💪', label: 'Ready on Time' },
+];
+
+export const KIDS_ACTIVITIES_GENERAL = [
   { emoji: '✨', label: 'Helped Parent' },
+  { emoji: '🧹', label: 'Cleaned Room' },
+  { emoji: '✏️', label: 'Did Homework' },
+  { emoji: '📚', label: 'Read a Book' },
+  { emoji: '🎹', label: 'Practiced' },
+  { emoji: '🤝', label: 'Was Kind' },
   { emoji: '🧸', label: 'Shared Toys' },
-  { emoji: '🙏', label: 'Said Please/Thanks' },
-  { emoji: '🧼', label: 'Washed Hands' },
-  { emoji: '🥗', label: 'Ate Veggies' },
+  { emoji: '👂', label: 'Listened Well' },
+  { emoji: '🧘', label: 'Stayed Calm' },
+  { emoji: '⚽', label: 'Played Outside' },
+  { emoji: '🎨', label: 'Drew/Painted' },
+  { emoji: '🙏', label: 'Said Thanks' },
+];
+
+export const KIDS_ACTIVITIES_EVENING = [
+  { emoji: '🦷', label: 'Brushed Teeth' },
+  { emoji: '🛁', label: 'Took Bath' },
+  { emoji: '🩷', label: 'Put on PJs' },
+  { emoji: '🧸', label: 'Tidied Toys' },
+  { emoji: '🌙', label: 'Said Goodnight' },
+  { emoji: '😴', label: 'Bed on Time' },
+  { emoji: '📖', label: 'Bedtime Story' },
+  { emoji: '🤫', label: 'Quiet Time' },
 ];

@@ -15,7 +15,7 @@ import {
 import { useHive } from '../../hooks/useHive';
 import { BeeMascot } from '../../components/BeeMascot';
 import { Button, Modal } from '../../components/ui';
-import { BEHAVIOR_ICONS, ENTRY_TYPES, EVENT_ICONS, BIRTHDAY_ICONS } from '../../utils/constants';
+import { BEHAVIOR_ICONS, ENTRY_TYPES, EVENT_ICONS } from '../../utils/constants';
 import styles from './Calendar.module.css';
 
 export const Calendar = () => {
@@ -29,9 +29,7 @@ export const Calendar = () => {
     deleteEntry, 
     addEvent,
     deleteEvent,
-    birthdays, 
-    addBirthday, 
-    deleteBirthday, 
+    getChildBirthdaysForDate,
     getChildMonthlyHoney, 
     settings,
     setShowHolidays,
@@ -48,7 +46,6 @@ export const Calendar = () => {
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [entryNote, setEntryNote] = useState('');
   const [eventTitle, setEventTitle] = useState('');
-  const [birthdayName, setBirthdayName] = useState('');
   const [dayOffEndDate, setDayOffEndDate] = useState('');
   const [eventParticipants, setEventParticipants] = useState([]);
 
@@ -67,8 +64,8 @@ export const Calendar = () => {
   };
 
   const getDayBirthdays = (date) => {
-    const monthDay = format(date, 'MM-dd');
-    return (birthdays || []).filter((b) => b.date === monthDay);
+    const dateStr = format(date, 'yyyy-MM-dd');
+    return getChildBirthdaysForDate(dateStr);
   };
 
   const getEntriesForDate = (date) => {
@@ -114,11 +111,6 @@ export const Calendar = () => {
       } else if (eventTitle.trim()) {
         addEvent(eventTitle.trim(), dateStr, selectedIcon, fullNote);
       }
-    } else if (entryTab === 'birthday') {
-      if (birthdayName.trim()) {
-        const monthDay = format(selectedDate, 'MM-dd');
-        addBirthday(birthdayName.trim(), monthDay, selectedIcon, entryNote);
-      }
     } else if (entryTab === 'activity') {
       if (isFamilyActivity) {
         addFamilyActivity(selectedIcon, dateStr, entryNote);
@@ -145,7 +137,6 @@ export const Calendar = () => {
     setSelectedIcon(null);
     setEntryNote('');
     setEventTitle('');
-    setBirthdayName('');
     setDayOffEndDate('');
     setEventParticipants([]);
   };
@@ -183,7 +174,6 @@ export const Calendar = () => {
     if (entryTab === 'good') return BEHAVIOR_ICONS.good;
     if (entryTab === 'bad') return BEHAVIOR_ICONS.bad;
     if (entryTab === 'event') return EVENT_ICONS;
-    if (entryTab === 'birthday') return BIRTHDAY_ICONS;
     return BEHAVIOR_ICONS.activity;
   };
 
@@ -334,22 +324,12 @@ export const Calendar = () => {
               <p className={styles.detailsLabel}>🎂 Birthdays</p>
               <div className={styles.detailsList}>
                 {dayBirthdays.map((birthday) => (
-                  <div key={birthday.id} className={`${styles.activityItem} ${birthday.note ? styles.hasNote : ''}`}>
+                  <div key={birthday.id} className={styles.activityItem}>
                     <div className={styles.activityMain}>
+                      <span>{birthday.avatar}</span>
                       <span>{birthday.icon}</span>
                       <span>{birthday.name}</span>
                     </div>
-                    {birthday.note && <p className={styles.activityNote}>{birthday.note}</p>}
-                    <button
-                      onClick={() => {
-                        if (window.confirm(`Delete ${birthday.name}'s birthday?`)) {
-                          deleteBirthday(birthday.id);
-                        }
-                      }}
-                      className={styles.deleteActivityBtn}
-                    >
-                      ✕
-                    </button>
                   </div>
                 ))}
               </div>
@@ -558,80 +538,9 @@ export const Calendar = () => {
               <span>🎉</span>
               <span>Event</span>
             </button>
-            <button
-              className={`${styles.entryTab} ${entryTab === 'birthday' ? styles.entryTabActive : ''}`}
-              onClick={() => { setEntryTab('birthday'); setSelectedIcon(null); setSelectedChildIds([]); setIsFamilyActivity(false); }}
-            >
-              <span>🎂</span>
-              <span>Birthday</span>
-            </button>
           </div>
 
-          {entryTab === 'birthday' ? (
-            !selectedIcon ? (
-              <div className={styles.addActivityForm}>
-                <p className={styles.formHint}>Pick an icon</p>
-                <div className={styles.iconGrid}>
-                  {getIconsForTab().map((item) => (
-                    <button
-                      key={item.emoji}
-                      className={`${styles.iconOption} ${selectedIcon === item.emoji ? styles.iconSelected : ''}`}
-                      onClick={() => handleSelectIcon(item.emoji)}
-                    >
-                      <span className={styles.iconEmoji}>{item.emoji}</span>
-                      <span className={styles.iconLabel}>{item.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className={styles.addActivityForm}>
-                <div className={styles.selectedChildren}>
-                  <span className={styles.selectedIconBadge}>{selectedIcon}</span>
-                  <button
-                    className={styles.changeChildBtn}
-                    onClick={() => setSelectedIcon(null)}
-                  >
-                    Change
-                  </button>
-                </div>
-
-                <div className={styles.noteSection}>
-                  <label className={styles.noteLabel}>Whose birthday?</label>
-                  <input
-                    type="text"
-                    className={styles.noteInput}
-                    placeholder="Name..."
-                    value={birthdayName}
-                    onChange={(e) => setBirthdayName(e.target.value)}
-                  />
-                </div>
-
-                <div className={styles.noteSection}>
-                  <label className={styles.noteLabel}>Note (optional)</label>
-                  <textarea
-                    className={styles.noteInput}
-                    placeholder="Any details..."
-                    value={entryNote}
-                    onChange={(e) => setEntryNote(e.target.value)}
-                    rows={2}
-                  />
-                </div>
-
-                <p className={styles.formHint}>🔄 Repeats every year on this date</p>
-
-                <Button 
-                  variant="primary" 
-                  size="large" 
-                  fullWidth 
-                  onClick={handleAddEntry}
-                  disabled={!birthdayName.trim()}
-                >
-                  Add Birthday
-                </Button>
-              </div>
-            )
-          ) : entryTab === 'event' ? (
+          {entryTab === 'event' ? (
             !selectedIcon ? (
               <div className={styles.addActivityForm}>
                 <p className={styles.formHint}>Pick an icon</p>

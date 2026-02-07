@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { supabase } from '../lib/supabase';
 import * as db from '../services/database';
 import { fetchIsraeliHolidays } from '../services/holidays';
 import { getLocalDate } from '../utils/dateUtils';
@@ -35,34 +36,75 @@ const mapEventFromDb = (event) => ({
   createdAt: event.created_at,
 });
 
-const mapBirthdayFromDb = (birthday) => ({
-  id: birthday.id,
-  name: birthday.name,
-  date: birthday.month_day,
-  icon: birthday.icon,
-  note: birthday.note,
-  createdAt: birthday.created_at,
-});
-
 export const HiveProvider = ({ children: childrenProp }) => {
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [children, setChildren] = useState([]);
   const [entries, setEntries] = useState([]);
   const [events, setEvents] = useState([]);
-  const [birthdays, setBirthdays] = useState([]);
   const [holidays, setHolidays] = useState({});
   const [settings, setSettings] = useState({ dailyFunCategory: 'animal', showHolidays: false });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setAuthLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const signUp = useCallback(async (email, password) => {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) throw error;
+    return data;
+  }, []);
+
+  const signIn = useCallback(async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    return data;
+  }, []);
+
+  const signInWithGoogle = useCallback(async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/BusyBee/',
+      },
+    });
+    if (error) throw error;
+    return data;
+  }, []);
+
+  const signOut = useCallback(async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+    setChildren([]);
+    setEntries([]);
+    setEvents([]);
+    setSettings({ dailyFunCategory: 'animal', showHolidays: false });
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
     const loadData = async () => {
       try {
         setLoading(true);
-        const [childrenData, entriesData, eventsData, birthdaysData, dailyFunCategory, showHolidays] = await Promise.all([
+        const [childrenData, entriesData, eventsData, dailyFunCategory, showHolidays] = await Promise.all([
           db.fetchChildren(),
           db.fetchEntries(),
           db.fetchEvents(),
-          db.fetchBirthdays(),
           db.getSetting('dailyFunCategory'),
           db.getSetting('showHolidays'),
         ]);
@@ -70,7 +112,6 @@ export const HiveProvider = ({ children: childrenProp }) => {
         setChildren(childrenData);
         setEntries(entriesData.map(mapEntryFromDb));
         setEvents(eventsData.map(mapEventFromDb));
-        setBirthdays(birthdaysData.map(mapBirthdayFromDb));
         setSettings({ 
           dailyFunCategory: dailyFunCategory || 'animal',
           showHolidays: showHolidays === 'true',
@@ -84,11 +125,11 @@ export const HiveProvider = ({ children: childrenProp }) => {
     };
 
     loadData();
-  }, []);
+  }, [user]);
 
-  const addChild = useCallback(async (name, avatar) => {
+  const addChild = useCallback(async (name, avatar, birthday = null) => {
     try {
-      const newChild = await db.addChild(name, avatar);
+      const newChild = await db.addChild(name, avatar, birthday);
       setChildren((prev) => [...prev, newChild]);
     } catch (err) {
       console.error('Failed to add child:', err);
@@ -190,36 +231,6 @@ export const HiveProvider = ({ children: childrenProp }) => {
     }
   }, []);
 
-  const addBirthday = useCallback(async (name, date, icon = '🎂', note = '') => {
-    try {
-      const newBirthday = await db.addBirthday(name, date, icon, note);
-      setBirthdays((prev) => [...prev, mapBirthdayFromDb(newBirthday)]);
-    } catch (err) {
-      console.error('Failed to add birthday:', err);
-      setError(err.message);
-    }
-  }, []);
-
-  const updateBirthday = useCallback(async (id, updates) => {
-    try {
-      const updated = await db.updateBirthday(id, updates);
-      setBirthdays((prev) => prev.map((b) => (b.id === id ? mapBirthdayFromDb(updated) : b)));
-    } catch (err) {
-      console.error('Failed to update birthday:', err);
-      setError(err.message);
-    }
-  }, []);
-
-  const deleteBirthday = useCallback(async (id) => {
-    try {
-      await db.deleteBirthday(id);
-      setBirthdays((prev) => prev.filter((b) => b.id !== id));
-    } catch (err) {
-      console.error('Failed to delete birthday:', err);
-      setError(err.message);
-    }
-  }, []);
-
   const getChildEntries = useCallback(
     (childId) => entries.filter((e) => e.childId === childId),
     [entries]
@@ -256,33 +267,75 @@ export const HiveProvider = ({ children: childrenProp }) => {
 
   const getUpcomingEvents = useCallback(() => {
     const today = getLocalDate();
-    return events
+    const futureEvents = events
       .filter((e) => e.date >= today)
       .sort((a, b) => a.date.localeCompare(b.date));
+
+    const grouped = [];
+    const seen = new Set();
+
+    for (const event of futureEvents) {
+      const key = `${event.title}-${event.icon}-${event.note || ''}`;
+      if (seen.has(key)) continue;
+
+      const sameEvents = futureEvents.filter(
+        (e) => e.title === event.title && e.icon === event.icon && e.note === event.note
+      );
+
+      if (sameEvents.length > 1) {
+        const dates = sameEvents.map((e) => e.date).sort();
+        grouped.push({
+          ...event,
+          date: dates[0],
+          endDate: dates[dates.length - 1],
+        });
+        seen.add(key);
+      } else {
+        grouped.push(event);
+      }
+    }
+
+    return grouped;
   }, [events]);
 
-  const getBirthdaysForDate = useCallback(
+  const getChildBirthdaysForDate = useCallback(
     (date) => {
       const monthDay = date.slice(5);
-      return birthdays.filter((b) => b.date === monthDay);
+      return children
+        .filter((c) => c.birthday && c.birthday.slice(5) === monthDay)
+        .map((c) => ({
+          id: `child-${c.id}`,
+          name: c.name,
+          date: monthDay,
+          icon: '🎂',
+          avatar: c.avatar,
+        }));
     },
-    [birthdays]
+    [children]
   );
 
-  const getUpcomingBirthdays = useCallback(() => {
+  const getUpcomingChildBirthdays = useCallback(() => {
     const today = getLocalDate();
     const currentYear = today.slice(0, 4);
 
-    return birthdays
-      .map((b) => {
-        const thisYearDate = `${currentYear}-${b.date}`;
-        const nextYearDate = `${parseInt(currentYear) + 1}-${b.date}`;
+    return children
+      .filter((c) => c.birthday)
+      .map((c) => {
+        const monthDay = c.birthday.slice(5);
+        const thisYearDate = `${currentYear}-${monthDay}`;
+        const nextYearDate = `${parseInt(currentYear) + 1}-${monthDay}`;
         const displayDate = thisYearDate >= today ? thisYearDate : nextYearDate;
-        return { ...b, displayDate };
+        return {
+          id: `child-${c.id}`,
+          name: c.name,
+          date: monthDay,
+          icon: '🎂',
+          displayDate,
+          avatar: c.avatar,
+        };
       })
-      .sort((a, b) => a.displayDate.localeCompare(b.displayDate))
-      .slice(0, 5);
-  }, [birthdays]);
+      .sort((a, b) => a.displayDate.localeCompare(b.displayDate));
+  }, [children]);
 
   const setDailyFunCategory = useCallback(async (category) => {
     try {
@@ -342,10 +395,15 @@ export const HiveProvider = ({ children: childrenProp }) => {
   );
 
   const value = {
+    user,
+    authLoading,
+    signUp,
+    signIn,
+    signInWithGoogle,
+    signOut,
     children,
     entries,
     events,
-    birthdays,
     holidays,
     settings,
     loading,
@@ -360,17 +418,14 @@ export const HiveProvider = ({ children: childrenProp }) => {
     addEvent,
     updateEvent,
     deleteEvent,
-    addBirthday,
-    updateBirthday,
-    deleteBirthday,
     getChildEntries,
     getEntriesForDate,
     getChildTodayHoney,
     getChildTotalHoney,
     getChildMonthlyHoney,
     getUpcomingEvents,
-    getBirthdaysForDate,
-    getUpcomingBirthdays,
+    getChildBirthdaysForDate,
+    getUpcomingChildBirthdays,
     setDailyFunCategory,
     getDailyFunContent,
     setShowHolidays,

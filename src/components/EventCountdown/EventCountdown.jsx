@@ -51,6 +51,14 @@ export const EventCountdown = ({ event }) => {
     return 'Many sleeps';
   };
 
+  const formatDateRange = () => {
+    if (event.endDate && event.endDate !== event.date) {
+      const endDate = parseISO(event.endDate);
+      return `${format(eventDate, 'MMM d')} - ${format(endDate, 'MMM d, yyyy')}`;
+    }
+    return format(eventDate, 'MMM d, yyyy');
+  };
+
   return (
     <div className={`${styles.card} ${styles[getExcitementLevel()]}`}>
       <div className={styles.iconWrapper}>
@@ -59,7 +67,7 @@ export const EventCountdown = ({ event }) => {
       <div className={styles.content}>
         <div className={styles.titleRow}>
           <h3 className={styles.title}>{event.title}</h3>
-          <span className={styles.date}>{format(eventDate, 'MMM d, yyyy')}</span>
+          <span className={styles.date}>{formatDateRange()}</span>
         </div>
         {event.note && <p className={styles.note}>{event.note}</p>}
         <div className={styles.countdown}>
@@ -76,6 +84,7 @@ EventCountdown.propTypes = {
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
+    endDate: PropTypes.string,
     icon: PropTypes.string.isRequired,
     note: PropTypes.string,
   }).isRequired,

@@ -2,13 +2,28 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHive } from '../../hooks/useHive';
 import { BeeMascot } from '../../components/BeeMascot';
-import { KIDS_ACTIVITIES, ENTRY_TYPES } from '../../utils/constants';
+import {
+  KIDS_ACTIVITY_MODES,
+  KIDS_ACTIVITIES_MORNING,
+  KIDS_ACTIVITIES_GENERAL,
+  KIDS_ACTIVITIES_EVENING,
+  ENTRY_TYPES,
+} from '../../utils/constants';
 import styles from './Kids.module.css';
+
+const getActivitiesForMode = (mode) => {
+  switch (mode) {
+    case 'morning': return KIDS_ACTIVITIES_MORNING;
+    case 'evening': return KIDS_ACTIVITIES_EVENING;
+    default: return KIDS_ACTIVITIES_GENERAL;
+  }
+};
 
 export const Kids = () => {
   const navigate = useNavigate();
   const { children, addEntry, loading } = useHive();
   const [selectedChild, setSelectedChild] = useState(null);
+  const [selectedMode, setSelectedMode] = useState(null);
   const [feedback, setFeedback] = useState(null);
 
   const handleActivityTap = async (activity) => {
@@ -21,7 +36,11 @@ export const Kids = () => {
   };
 
   const handleBack = () => {
-    setSelectedChild(null);
+    if (selectedMode) {
+      setSelectedMode(null);
+    } else {
+      setSelectedChild(null);
+    }
     setFeedback(null);
   };
 
@@ -76,6 +95,39 @@ export const Kids = () => {
     );
   }
 
+  if (!selectedMode) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.modeScreen}>
+          <button className={styles.backButton} onClick={handleBack}>
+            ← Back
+          </button>
+          
+          <div className={styles.modeHeader}>
+            <span className={styles.selectedAvatar}>{selectedChild.avatar}</span>
+            <h1 className={styles.greeting}>Hi, {selectedChild.name}!</h1>
+            <p className={styles.subtitle}>When is it?</p>
+          </div>
+
+          <div className={styles.modeGrid}>
+            {KIDS_ACTIVITY_MODES.map((mode) => (
+              <button
+                key={mode.id}
+                className={`${styles.modeButton} ${styles[`mode_${mode.id}`]}`}
+                onClick={() => setSelectedMode(mode.id)}
+              >
+                <span className={styles.modeIcon}>{mode.emoji}</span>
+                <span className={styles.modeLabel}>{mode.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const activities = getActivitiesForMode(selectedMode);
+
   return (
     <div className={styles.page}>
       <div className={styles.activityScreen}>
@@ -90,7 +142,7 @@ export const Kids = () => {
         </div>
 
         <div className={styles.activitiesGrid}>
-          {KIDS_ACTIVITIES.map((activity) => (
+          {activities.map((activity) => (
             <button
               key={activity.emoji}
               className={styles.activityButton}
