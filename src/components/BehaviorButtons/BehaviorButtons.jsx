@@ -5,9 +5,11 @@ import { BEHAVIOR_ICONS, ENTRY_TYPES } from '../../utils/constants';
 import styles from './BehaviorButtons.module.css';
 
 export const BehaviorButtons = ({ childId }) => {
-  const { addEntry } = useHive();
+  const { addEntry, getChildTodayFood } = useHive();
   const [activeTab, setActiveTab] = useState('good');
   const [lastAdded, setLastAdded] = useState(null);
+
+  const todayFood = getChildTodayFood(childId);
 
   const handleIconClick = (item, type) => {
     addEntry(childId, type, item.emoji);
@@ -57,20 +59,41 @@ export const BehaviorButtons = ({ childId }) => {
           <span className={styles.tabIcon}>🎯</span>
           <span className={styles.tabLabel}>Activity</span>
         </button>
+        <button
+          className={`${styles.tab} ${activeTab === 'food' ? styles.tabActive : ''}`}
+          onClick={() => setActiveTab('food')}
+        >
+          <span className={styles.tabIcon}>🍽️</span>
+          <span className={styles.tabLabel}>Food</span>
+        </button>
       </div>
 
-      <div className={styles.iconsGrid}>
-        {getItems().map((item) => (
-          <button
-            key={item.emoji}
-            className={`${styles.iconButton} ${lastAdded?.emoji === item.emoji ? styles.iconAdded : ''}`}
-            onClick={() => handleIconClick(item, getEntryType())}
-          >
-            <span className={styles.icon}>{item.emoji}</span>
-            <span className={styles.label}>{item.label}</span>
-          </button>
-        ))}
-      </div>
+      {activeTab === 'food' ? (
+        <div className={styles.foodHistory}>
+          {todayFood.length > 0 ? (
+            <div className={styles.foodIcons}>
+              {todayFood.map((icon, i) => (
+                <span key={i} className={styles.foodHistoryIcon}>{icon}</span>
+              ))}
+            </div>
+          ) : (
+            <p className={styles.foodEmpty}>No food logged today</p>
+          )}
+        </div>
+      ) : (
+        <div className={styles.iconsGrid}>
+          {getItems().map((item) => (
+            <button
+              key={item.emoji}
+              className={`${styles.iconButton} ${lastAdded?.emoji === item.emoji ? styles.iconAdded : ''}`}
+              onClick={() => handleIconClick(item, getEntryType())}
+            >
+              <span className={styles.icon}>{item.emoji}</span>
+              <span className={styles.label}>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {lastAdded && (
         <div className={`${styles.feedback} ${styles[lastAdded.type] || styles.activity}`}>

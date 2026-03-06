@@ -132,6 +132,35 @@
   color: var(--color-dark-text);
 }
 
+.foodHistory {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  padding: var(--spacing-lg);
+  background: var(--color-white);
+  border-radius: var(--radius-large);
+  box-shadow: var(--shadow-soft);
+}
+
+.foodIcons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.foodHistoryIcon {
+  font-size: 2rem;
+}
+
+.foodEmpty {
+  color: var(--color-light-text);
+  font-size: var(--font-size-md);
+  margin: 0;
+}
+
 .feedbackIcon {
   font-size: 1.8rem;
   animation: bounce 0.5s ease-in-out;

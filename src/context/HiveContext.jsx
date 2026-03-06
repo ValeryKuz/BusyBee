@@ -256,6 +256,16 @@ export const HiveProvider = ({ children: childrenProp }) => {
     [entries]
   );
 
+  const getChildTodayFood = useCallback(
+    (childId) => {
+      const today = getLocalDate();
+      return entries
+        .filter((e) => e.childId === childId && e.date === today && e.type === 'food')
+        .map((e) => e.icon);
+    },
+    [entries]
+  );
+
   const getChildMonthlyHoney = useCallback(
     (childId, yearMonth) => {
       return entries
@@ -459,6 +469,7 @@ export const HiveProvider = ({ children: childrenProp }) => {
     getChildEntries,
     getEntriesForDate,
     getChildTodayHoney,
+    getChildTodayFood,
     getChildTotalHoney,
     getChildMonthlyHoney,
     getUpcomingEvents,
