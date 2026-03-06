@@ -29,6 +29,9 @@ export const Calendar = () => {
     deleteEntry, 
     addEvent,
     deleteEvent,
+    getRelatedEvents,
+    updateEventRange,
+    deleteEventRange,
     getChildBirthdaysForDate,
     getChildMonthlyHoney, 
     settings,
@@ -48,6 +51,9 @@ export const Calendar = () => {
   const [eventTitle, setEventTitle] = useState('');
   const [dayOffEndDate, setDayOffEndDate] = useState('');
   const [eventParticipants, setEventParticipants] = useState([]);
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [editEventDate, setEditEventDate] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const today = new Date();
 
@@ -91,42 +97,48 @@ export const Calendar = () => {
   };
 
   const handleAddEntry = async () => {
-    if (!selectedDate || !selectedIcon) return;
-    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    if (!selectedDate || !selectedIcon || saving) return;
+    setSaving(true);
     
-    if (entryTab === 'event') {
-      const participantsPrefix = getParticipantsDisplay();
-      const fullNote = participantsPrefix ? `${participantsPrefix}${entryNote ? ' | ' + entryNote : ''}` : entryNote;
+    try {
+      const dateStr = format(selectedDate, 'yyyy-MM-dd');
       
-      if (selectedIcon === '🏡' || selectedIcon === '✈️') {
-        const defaultTitle = selectedIcon === '🏡' ? 'Day Off' : 'Trip';
-        const title = eventTitle.trim() || defaultTitle;
-        const endDate = dayOffEndDate ? new Date(dayOffEndDate) : selectedDate;
-        let current = new Date(selectedDate);
-        while (current <= endDate) {
-          const currentDateStr = format(current, 'yyyy-MM-dd');
-          await addEvent(title, currentDateStr, selectedIcon, fullNote);
-          current = addDays(current, 1);
+      if (entryTab === 'event') {
+        const participantsPrefix = getParticipantsDisplay();
+        const fullNote = participantsPrefix ? `${participantsPrefix}${entryNote ? ' | ' + entryNote : ''}` : entryNote;
+        
+        if (selectedIcon === '🏡' || selectedIcon === '✈️') {
+          const defaultTitle = selectedIcon === '🏡' ? 'Day Off' : 'Trip';
+          const title = eventTitle.trim() || defaultTitle;
+          const endDate = dayOffEndDate ? new Date(dayOffEndDate) : selectedDate;
+          let current = new Date(selectedDate);
+          while (current <= endDate) {
+            const currentDateStr = format(current, 'yyyy-MM-dd');
+            await addEvent(title, currentDateStr, selectedIcon, fullNote);
+            current = addDays(current, 1);
+          }
+        } else if (eventTitle.trim()) {
+          await addEvent(eventTitle.trim(), dateStr, selectedIcon, fullNote);
         }
-      } else if (eventTitle.trim()) {
-        addEvent(eventTitle.trim(), dateStr, selectedIcon, fullNote);
+      } else if (entryTab === 'activity') {
+        if (isFamilyActivity) {
+          await addFamilyActivity(selectedIcon, dateStr, entryNote);
+        } else if (selectedChildIds.length > 0) {
+          for (const childId of selectedChildIds) {
+            await addEntry(childId, ENTRY_TYPES.ACTIVITY, selectedIcon, dateStr, entryNote);
+          }
+        }
+      } else {
+        const type = entryTab === 'good' ? ENTRY_TYPES.GOOD : ENTRY_TYPES.BAD;
+        for (const childId of selectedChildIds) {
+          await addEntry(childId, type, selectedIcon, dateStr, entryNote);
+        }
       }
-    } else if (entryTab === 'activity') {
-      if (isFamilyActivity) {
-        addFamilyActivity(selectedIcon, dateStr, entryNote);
-      } else if (selectedChildIds.length > 0) {
-        selectedChildIds.forEach((childId) => {
-          addEntry(childId, ENTRY_TYPES.ACTIVITY, selectedIcon, dateStr, entryNote);
-        });
-      }
-    } else {
-      const type = entryTab === 'good' ? ENTRY_TYPES.GOOD : ENTRY_TYPES.BAD;
-      selectedChildIds.forEach((childId) => {
-        addEntry(childId, type, selectedIcon, dateStr, entryNote);
-      });
+      
+      resetModal();
+    } finally {
+      setSaving(false);
     }
-    
-    resetModal();
   };
 
   const resetModal = () => {
@@ -350,16 +362,27 @@ export const Calendar = () => {
                       <span>{event.title}</span>
                     </div>
                     {cleanNote && <p className={styles.activityNote}>{cleanNote}</p>}
-                    <button
-                      onClick={() => {
-                        if (window.confirm(`Delete "${event.title}" event?`)) {
-                          deleteEvent(event.id);
-                        }
-                      }}
-                      className={styles.deleteActivityBtn}
-                    >
-                      ✕
-                    </button>
+                    <div className={styles.eventActions}>
+                      <button
+                        onClick={() => {
+                          setEditingEvent(event);
+                          setEditEventDate(event.date);
+                        }}
+                        className={styles.editEventBtn}
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (window.confirm(`Delete "${event.title}" event?`)) {
+                            deleteEvent(event.id);
+                          }
+                        }}
+                        className={styles.deleteEventBtn}
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
                   );
                 })}
@@ -657,8 +680,9 @@ export const Calendar = () => {
                       size="large" 
                       fullWidth 
                       onClick={handleAddEntry}
+                      disabled={saving}
                     >
-                      {selectedIcon === '🏡' ? 'Add Day Off' : 'Add Trip'}
+                      {saving ? 'Saving...' : (selectedIcon === '🏡' ? 'Add Day Off' : 'Add Trip')}
                     </Button>
                   </>
                 ) : (
@@ -727,9 +751,9 @@ export const Calendar = () => {
                       size="large" 
                       fullWidth 
                       onClick={handleAddEntry}
-                      disabled={!eventTitle.trim()}
+                      disabled={!eventTitle.trim() || saving}
                     >
-                      Add Event
+                      {saving ? 'Saving...' : 'Add Event'}
                     </Button>
                   </>
                 )}
@@ -823,12 +847,110 @@ export const Calendar = () => {
                 />
               </div>
 
-              <Button variant="primary" size="large" fullWidth onClick={handleAddEntry}>
-                Add Entry
+              <Button variant="primary" size="large" fullWidth onClick={handleAddEntry} disabled={saving}>
+                {saving ? 'Saving...' : 'Add Entry'}
               </Button>
             </div>
           )}
         </div>
+      </Modal>
+
+      <Modal 
+        isOpen={!!editingEvent} 
+        onClose={() => setEditingEvent(null)} 
+        title="Edit Event Date"
+      >
+        {editingEvent && (() => {
+          const relatedEvents = getRelatedEvents(editingEvent);
+          const isMultiDay = relatedEvents.length > 1;
+          const startDate = relatedEvents[0]?.date;
+          const endDate = relatedEvents[relatedEvents.length - 1]?.date;
+          
+          return (
+            <div className={styles.addActivityForm}>
+              <div className={styles.selectedChildren}>
+                <span className={styles.selectedIconBadge}>{editingEvent.icon}</span>
+                <span>{editingEvent.title}</span>
+              </div>
+              
+              {isMultiDay && (
+                <p className={styles.eventRangeInfo}>
+                  Current: {format(new Date(startDate), 'MMM d')} - {format(new Date(endDate), 'MMM d, yyyy')} ({relatedEvents.length} days)
+                </p>
+              )}
+              
+              <div className={styles.noteSection}>
+                <label className={styles.noteLabel}>{isMultiDay ? 'New start date' : 'New date'}</label>
+                <input
+                  type="date"
+                  className={styles.noteInput}
+                  value={editEventDate}
+                  onChange={(e) => setEditEventDate(e.target.value)}
+                  style={{ minHeight: 'auto' }}
+                />
+              </div>
+
+              {isMultiDay && editEventDate && editEventDate !== startDate && (
+                <p className={styles.eventRangeInfo}>
+                  New: {format(new Date(editEventDate), 'MMM d')} - {format(addDays(new Date(editEventDate), relatedEvents.length - 1), 'MMM d, yyyy')}
+                </p>
+              )}
+
+              <Button 
+                variant="primary" 
+                size="large" 
+                fullWidth 
+                disabled={saving}
+                onClick={async () => {
+                  const currentStart = relatedEvents[0]?.date;
+                  if (editEventDate && editEventDate !== currentStart) {
+                    setSaving(true);
+                    try {
+                      await updateEventRange(editingEvent, editEventDate);
+                      setSelectedDate(new Date(editEventDate));
+                      setEditingEvent(null);
+                    } finally {
+                      setSaving(false);
+                    }
+                  } else {
+                    setEditingEvent(null);
+                  }
+                }}
+              >
+                {saving ? 'Saving...' : (isMultiDay ? `Move ${relatedEvents.length} Days` : 'Update Date')}
+              </Button>
+
+              <Button 
+                variant="secondary" 
+                size="medium" 
+                fullWidth 
+                disabled={saving}
+                onClick={async () => {
+                  const confirmMsg = isMultiDay 
+                    ? `Delete all ${relatedEvents.length} days of "${editingEvent.title}"?`
+                    : `Delete "${editingEvent.title}"?`;
+                  if (window.confirm(confirmMsg)) {
+                    setSaving(true);
+                    try {
+                      if (isMultiDay) {
+                        await deleteEventRange(editingEvent);
+                      } else {
+                        await deleteEvent(editingEvent.id);
+                      }
+                      setEditingEvent(null);
+                      setSelectedDate(null);
+                    } finally {
+                      setSaving(false);
+                    }
+                  }
+                }}
+                style={{ marginTop: 'var(--spacing-sm)', color: '#FF7A7A' }}
+              >
+                {saving ? 'Deleting...' : (isMultiDay ? `Delete All ${relatedEvents.length} Days` : 'Delete Event')}
+              </Button>
+            </div>
+          );
+        })()}
       </Modal>
     </div>
   );

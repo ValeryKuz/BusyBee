@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { addDays, format } from 'date-fns';
 import { useHive } from '../../hooks/useHive';
 import { BeeMascot } from '../../components/BeeMascot';
 import { Button, Modal } from '../../components/ui';
@@ -10,13 +11,16 @@ import styles from './Events.module.css';
 
 export const Events = () => {
   const navigate = useNavigate();
-  const { addEvent, deleteEvent, getUpcomingEvents, loading } = useHive();
+  const { addEvent, deleteEvent, getRelatedEvents, updateEventRange, deleteEventRange, getUpcomingEvents, loading } = useHive();
   const [showAddEvent, setShowAddEvent] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
   const [newEventTitle, setNewEventTitle] = useState('');
   const [newEventDate, setNewEventDate] = useState('');
   const [newEventIcon, setNewEventIcon] = useState(EVENT_ICONS[0].emoji);
   const [newEventNote, setNewEventNote] = useState('');
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [editEventDate, setEditEventDate] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const upcomingEvents = getUpcomingEvents();
   const today = getLocalDate();
@@ -80,13 +84,25 @@ export const Events = () => {
             {upcomingEvents.map((event) => (
               <div key={event.id} className={styles.eventCard}>
                 <EventCountdown event={event} />
-                <button
-                  className={styles.deleteButton}
-                  onClick={() => handleDeleteEvent(event)}
-                  aria-label="Delete event"
-                >
-                  ✕
-                </button>
+                <div className={styles.eventActions}>
+                  <button
+                    className={styles.editButton}
+                    onClick={() => {
+                      setEditingEvent(event);
+                      setEditEventDate(event.date);
+                    }}
+                    aria-label="Edit event"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    className={styles.deleteButton}
+                    onClick={() => handleDeleteEvent(event)}
+                    aria-label="Delete event"
+                  >
+                    ✕
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -169,6 +185,101 @@ export const Events = () => {
             </Button>
           </div>
         </div>
+      </Modal>
+
+      <Modal 
+        isOpen={!!editingEvent} 
+        onClose={() => setEditingEvent(null)} 
+        title="Edit Event Date"
+      >
+        {editingEvent && (() => {
+          const relatedEvents = getRelatedEvents(editingEvent);
+          const isMultiDay = relatedEvents.length > 1;
+          const startDate = relatedEvents[0]?.date;
+          const endDate = relatedEvents[relatedEvents.length - 1]?.date;
+          
+          return (
+            <div className={styles.addForm}>
+              <div className={styles.editEventHeader}>
+                <span className={styles.editEventIcon}>{editingEvent.icon}</span>
+                <span className={styles.editEventTitle}>{editingEvent.title}</span>
+              </div>
+              
+              {isMultiDay && (
+                <p className={styles.eventRangeInfo}>
+                  Current: {format(new Date(startDate), 'MMM d')} - {format(new Date(endDate), 'MMM d, yyyy')} ({relatedEvents.length} days)
+                </p>
+              )}
+              
+              <div className={styles.formGroup}>
+                <label className={styles.label}>{isMultiDay ? 'New start date' : 'New date'}</label>
+                <input
+                  type="date"
+                  className={styles.input}
+                  value={editEventDate}
+                  onChange={(e) => setEditEventDate(e.target.value)}
+                />
+              </div>
+
+              {isMultiDay && editEventDate && editEventDate !== startDate && (
+                <p className={styles.eventRangeInfo}>
+                  New: {format(new Date(editEventDate), 'MMM d')} - {format(addDays(new Date(editEventDate), relatedEvents.length - 1), 'MMM d, yyyy')}
+                </p>
+              )}
+
+              <Button 
+                variant="primary" 
+                size="large" 
+                fullWidth 
+                disabled={saving}
+                onClick={async () => {
+                  const currentStart = relatedEvents[0]?.date;
+                  if (editEventDate && editEventDate !== currentStart) {
+                    setSaving(true);
+                    try {
+                      await updateEventRange(editingEvent, editEventDate);
+                      setEditingEvent(null);
+                    } finally {
+                      setSaving(false);
+                    }
+                  } else {
+                    setEditingEvent(null);
+                  }
+                }}
+              >
+                {saving ? 'Saving...' : (isMultiDay ? `Move ${relatedEvents.length} Days` : 'Update Date')}
+              </Button>
+
+              <Button 
+                variant="secondary" 
+                size="medium" 
+                fullWidth 
+                disabled={saving}
+                onClick={async () => {
+                  const confirmMsg = isMultiDay 
+                    ? `Delete all ${relatedEvents.length} days of "${editingEvent.title}"?`
+                    : `Delete "${editingEvent.title}"?`;
+                  if (window.confirm(confirmMsg)) {
+                    setSaving(true);
+                    try {
+                      if (isMultiDay) {
+                        await deleteEventRange(editingEvent);
+                      } else {
+                        await deleteEvent(editingEvent.id);
+                      }
+                      setEditingEvent(null);
+                    } finally {
+                      setSaving(false);
+                    }
+                  }
+                }}
+                style={{ marginTop: 'var(--spacing-sm)', color: '#FF7A7A' }}
+              >
+                {saving ? 'Deleting...' : (isMultiDay ? `Delete All ${relatedEvents.length} Days` : 'Delete Event')}
+              </Button>
+            </div>
+          );
+        })()}
       </Modal>
     </div>
   );

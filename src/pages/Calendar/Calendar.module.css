@@ -516,6 +516,66 @@
   transition: all 0.2s ease;
 }
 
+.eventActions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.activityItem:hover .eventActions {
+  opacity: 1;
+}
+
+.editEventBtn,
+.deleteEventBtn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.editEventBtn {
+  background: rgba(181, 222, 255, 0.95);
+}
+
+.editEventBtn:hover {
+  background: #B5DEFF;
+  transform: scale(1.1);
+}
+
+.deleteEventBtn {
+  background: rgba(255, 122, 122, 0.95);
+  color: white;
+  font-weight: 700;
+}
+
+.deleteEventBtn:hover {
+  background: #FF7A7A;
+  transform: scale(1.1);
+}
+
+.eventRangeInfo {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-light-text);
+  background: linear-gradient(135deg, rgba(252, 255, 166, 0.4), rgba(193, 255, 215, 0.4));
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-medium);
+  margin: 0;
+}
+
 .emptyDay {
   text-align: center;
   color: var(--color-light-text);

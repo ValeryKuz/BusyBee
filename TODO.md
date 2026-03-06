@@ -16,6 +16,7 @@
 ## Events
 
 8. **Recurring Events** - Allow creating events that repeat yearly or weekly (kids activities, family birthdays, home events)
+15. **Edit Event Dates** - Allow editing/postponing event dates (e.g., trip rescheduled)
 
 ## Code Quality
 

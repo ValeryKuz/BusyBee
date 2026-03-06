@@ -7,6 +7,7 @@ import {
   KIDS_ACTIVITIES_MORNING,
   KIDS_ACTIVITIES_GENERAL,
   KIDS_ACTIVITIES_EVENING,
+  KIDS_ACTIVITIES_FOOD,
   ENTRY_TYPES,
 } from '../../utils/constants';
 import styles from './Kids.module.css';
@@ -15,6 +16,7 @@ const getActivitiesForMode = (mode) => {
   switch (mode) {
     case 'morning': return KIDS_ACTIVITIES_MORNING;
     case 'evening': return KIDS_ACTIVITIES_EVENING;
+    case 'food': return KIDS_ACTIVITIES_FOOD;
     default: return KIDS_ACTIVITIES_GENERAL;
   }
 };
@@ -29,7 +31,9 @@ export const Kids = () => {
   const handleActivityTap = async (activity) => {
     if (!selectedChild) return;
     
-    await addEntry(selectedChild.id, ENTRY_TYPES.GOOD, activity.emoji);
+    const isFood = selectedMode === 'food';
+    const type = isFood ? ENTRY_TYPES.FOOD : ENTRY_TYPES.GOOD;
+    await addEntry(selectedChild.id, type, activity.emoji, null, '', isFood ? 0 : undefined);
     setFeedback(activity);
     
     setTimeout(() => setFeedback(null), 2000);
@@ -138,7 +142,7 @@ export const Kids = () => {
         <div className={styles.header}>
           <span className={styles.selectedAvatar}>{selectedChild.avatar}</span>
           <h1 className={styles.greeting}>Hi, {selectedChild.name}!</h1>
-          <p className={styles.subtitle}>What did you do?</p>
+          <p className={styles.subtitle}>{selectedMode === 'food' ? 'What did you eat?' : 'What did you do?'}</p>
         </div>
 
         <div className={styles.activitiesGrid}>
@@ -158,7 +162,7 @@ export const Kids = () => {
           <div className={styles.feedback}>
             <div className={styles.feedbackContent}>
               <span className={styles.feedbackIcon}>{feedback.emoji}</span>
-              <span className={styles.feedbackText}>Great job! +5 🍯</span>
+              <span className={styles.feedbackText}>{selectedMode === 'food' ? 'Logged! 🍽️' : 'Great job! +5 🍯'}</span>
             </div>
           </div>
         )}

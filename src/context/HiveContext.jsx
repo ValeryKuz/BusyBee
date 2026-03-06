@@ -298,6 +298,44 @@ export const HiveProvider = ({ children: childrenProp }) => {
     return grouped;
   }, [events]);
 
+  const getRelatedEvents = useCallback((event) => {
+    return events.filter(
+      (e) => e.title === event.title && e.icon === event.icon && e.note === event.note
+    ).sort((a, b) => a.date.localeCompare(b.date));
+  }, [events]);
+
+  const updateEventRange = useCallback(async (event, newStartDate) => {
+    const relatedEvents = events.filter(
+      (e) => e.title === event.title && e.icon === event.icon && e.note === event.note
+    ).sort((a, b) => a.date.localeCompare(b.date));
+
+    if (relatedEvents.length <= 1) {
+      await updateEvent(event.id, { date: newStartDate });
+      return;
+    }
+
+    const oldStartDate = new Date(relatedEvents[0].date);
+    const newStart = new Date(newStartDate);
+    const daysDiff = Math.round((newStart - oldStartDate) / (1000 * 60 * 60 * 24));
+
+    for (const e of relatedEvents) {
+      const oldDate = new Date(e.date);
+      const newDate = new Date(oldDate);
+      newDate.setDate(newDate.getDate() + daysDiff);
+      const newDateStr = newDate.toISOString().split('T')[0];
+      await updateEvent(e.id, { date: newDateStr });
+    }
+  }, [events, updateEvent]);
+
+  const deleteEventRange = useCallback(async (event) => {
+    const relatedEvents = events.filter(
+      (e) => e.title === event.title && e.icon === event.icon && e.note === event.note
+    );
+    for (const e of relatedEvents) {
+      await deleteEvent(e.id);
+    }
+  }, [events, deleteEvent]);
+
   const getChildBirthdaysForDate = useCallback(
     (date) => {
       const monthDay = date.slice(5);
@@ -424,6 +462,9 @@ export const HiveProvider = ({ children: childrenProp }) => {
     getChildTotalHoney,
     getChildMonthlyHoney,
     getUpcomingEvents,
+    getRelatedEvents,
+    updateEventRange,
+    deleteEventRange,
     getChildBirthdaysForDate,
     getUpcomingChildBirthdays,
     setDailyFunCategory,

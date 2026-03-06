@@ -5,16 +5,12 @@ import { BEHAVIOR_ICONS, ENTRY_TYPES } from '../../utils/constants';
 import styles from './BehaviorButtons.module.css';
 
 export const BehaviorButtons = ({ childId }) => {
-  const { addEntry, addFamilyActivity } = useHive();
+  const { addEntry } = useHive();
   const [activeTab, setActiveTab] = useState('good');
   const [lastAdded, setLastAdded] = useState(null);
 
   const handleIconClick = (item, type) => {
-    if (activeTab === 'family') {
-      addFamilyActivity(item.emoji);
-    } else {
-      addEntry(childId, type, item.emoji);
-    }
+    addEntry(childId, type, item.emoji);
     setLastAdded({ ...item, type: activeTab });
     setTimeout(() => setLastAdded(null), 1500);
   };
@@ -34,7 +30,6 @@ export const BehaviorButtons = ({ childId }) => {
   const getFeedbackText = (item) => {
     if (item.type === 'good') return `${item.label} +5 🍯`;
     if (item.type === 'bad') return `${item.label} -2 🍯`;
-    if (item.type === 'family') return `Family ${item.label}!`;
     return `${item.label} logged!`;
   };
 
@@ -61,13 +56,6 @@ export const BehaviorButtons = ({ childId }) => {
         >
           <span className={styles.tabIcon}>🎯</span>
           <span className={styles.tabLabel}>Activity</span>
-        </button>
-        <button
-          className={`${styles.tab} ${activeTab === 'family' ? styles.tabActive : ''}`}
-          onClick={() => setActiveTab('family')}
-        >
-          <span className={styles.tabIcon}>👨‍👩‍👧</span>
-          <span className={styles.tabLabel}>Family</span>
         </button>
       </div>
 

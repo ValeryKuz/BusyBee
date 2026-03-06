@@ -92,10 +92,16 @@
   position: relative;
 }
 
-.deleteButton {
+.eventActions {
   position: absolute;
   top: var(--spacing-sm);
   right: var(--spacing-sm);
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.editButton,
+.deleteButton {
   width: 28px;
   height: 28px;
   display: flex;
@@ -111,10 +117,46 @@
   transition: all 0.2s ease;
 }
 
+.editButton:hover {
+  opacity: 1;
+  background: #B5DEFF;
+}
+
 .deleteButton:hover {
   opacity: 1;
   background: #FF9B9B;
   color: var(--color-white);
+}
+
+.editEventHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.editEventIcon {
+  font-size: 2rem;
+  background: #DAF0FF;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-medium);
+}
+
+.editEventTitle {
+  font-family: var(--font-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-dark-text);
+}
+
+.eventRangeInfo {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-light-text);
+  background: linear-gradient(135deg, rgba(252, 255, 166, 0.4), rgba(193, 255, 215, 0.4));
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-medium);
+  margin: 0;
 }
 
 .visualSection {

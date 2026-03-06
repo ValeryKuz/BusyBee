@@ -7,6 +7,7 @@ export const ENTRY_TYPES = {
   GIFT: 'gift',
   ACTIVITY: 'activity',
   FAMILY_ACTIVITY: 'family_activity',
+  FOOD: 'food',
 };
 
 export const BEHAVIOR_ICONS = {
@@ -241,6 +242,7 @@ export const KIDS_ACTIVITY_MODES = [
   { id: 'morning', emoji: '🌅', label: 'Morning' },
   { id: 'general', emoji: '⭐', label: 'Anytime' },
   { id: 'evening', emoji: '🌙', label: 'Evening' },
+  { id: 'food', emoji: '🍽️', label: 'Food' },
 ];
 
 export const KIDS_ACTIVITIES_MORNING = [
@@ -278,4 +280,45 @@ export const KIDS_ACTIVITIES_EVENING = [
   { emoji: '😴', label: 'Bed on Time' },
   { emoji: '📖', label: 'Bedtime Story' },
   { emoji: '🤫', label: 'Quiet Time' },
+];
+
+export const KIDS_ACTIVITIES_FOOD = [
+  { emoji: '🍎', label: 'Apple' },
+  { emoji: '🍌', label: 'Banana' },
+  { emoji: '🍊', label: 'Orange' },
+  { emoji: '🍇', label: 'Grapes' },
+  { emoji: '🍓', label: 'Strawberry' },
+  { emoji: '🥣', label: 'Cereal' },
+  { emoji: '🍞', label: 'Bread' },
+  { emoji: '🥪', label: 'Sandwich' },
+  { emoji: '🍝', label: 'Pasta' },
+  { emoji: '🍚', label: 'Rice' },
+  { emoji: '🍗', label: 'Chicken' },
+  { emoji: '🥩', label: 'Meat' },
+  { emoji: '🐟', label: 'Fish' },
+  { emoji: '🍳', label: 'Eggs' },
+  { emoji: '🥗', label: 'Salad' },
+  { emoji: '🧀', label: 'Cheese' },
+  { emoji: '🥛', label: 'Milk' },
+  { emoji: '🍦', label: 'Ice Cream' },
+  { emoji: '🍪', label: 'Cookie' },
+  { emoji: '🥜', label: 'Nuts' },
+  { emoji: '🥕', label: 'Carrot' },
+  { emoji: '🥒', label: 'Cucumber' },
+  { emoji: '🥦', label: 'Broccoli' },
+  { emoji: '🍰', label: 'Cake' },
+  { emoji: '🍬', label: 'Candy' },
+  { emoji: '🍫', label: 'Chocolate' },
+  { emoji: '🍩', label: 'Donut' },
+  { emoji: '🧁', label: 'Cupcake' },
+  { emoji: '🍭', label: 'Lollipop' },
+  { emoji: '🍕', label: 'Pizza' },
+  { emoji: '🍔', label: 'Burger' },
+  { emoji: '🍟', label: 'Fries' },
+  { emoji: '🌭', label: 'Hot Dog' },
+  { emoji: '🥐', label: 'Pastry' },
+  { emoji: '💧', label: 'Water' },
+  { emoji: '🧃', label: 'Juice' },
+  { emoji: '☕', label: 'Hot Drink' },
+  { emoji: '🥤', label: 'Soda' },
 ];
