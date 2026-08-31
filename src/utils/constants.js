@@ -1,5 +1,22 @@
+import stickerStar from '../assets/stickers/star.png';
+import stickerMedal from '../assets/stickers/medal.png';
+import stickerTrophy from '../assets/stickers/trophy.png';
+import stickerChampion from '../assets/stickers/champion.png';
+import stickerWinner from '../assets/stickers/winner.png';
+
 export const STORAGE_KEY = 'busybee_data';
 export const STORAGE_VERSION = 1;
+
+// Achievement stickers for "fun things that happened" moments (attach to a
+// good-behavior entry). Source: Flaticon "Champion" sticker pack by Stickers
+// (https://www.flaticon.com/free-stickers/winning-star), credited in Settings.
+export const STICKERS = [
+  { id: 'star', label: 'Champion star', src: stickerStar },
+  { id: 'medal', label: '#1 medal', src: stickerMedal },
+  { id: 'trophy', label: 'Trophy', src: stickerTrophy },
+  { id: 'champion', label: 'Champion', src: stickerChampion },
+  { id: 'winner', label: 'Winner', src: stickerWinner },
+];
 
 export const ENTRY_TYPES = {
   GOOD: 'good',

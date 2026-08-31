@@ -345,9 +345,9 @@ export const Dashboard = () => {
             <p className={styles.settingsDescription}>
               Logged in as {user?.email}
             </p>
-            <Button 
-              variant="secondary" 
-              size="small" 
+            <Button
+              variant="secondary"
+              size="small"
               onClick={async () => {
                 await signOut();
                 setShowSettings(false);
@@ -355,6 +355,20 @@ export const Dashboard = () => {
             >
               🚪 Log Out
             </Button>
+          </div>
+
+          <div className={styles.settingsSection}>
+            <h3 className={styles.settingsSectionTitle}>💛 Credits</h3>
+            <p className={styles.settingsDescription}>
+              Achievement stickers by{' '}
+              <a href="https://www.flaticon.com/free-stickers/winning-star" target="_blank" rel="noreferrer">
+                Stickers
+              </a>{' '}
+              on{' '}
+              <a href="https://www.flaticon.com/" target="_blank" rel="noreferrer">
+                Flaticon
+              </a>
+            </p>
           </div>
         </div>
       </Modal>

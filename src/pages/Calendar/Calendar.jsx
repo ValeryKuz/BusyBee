@@ -15,7 +15,7 @@ import {
 import { useHive } from '../../hooks/useHive';
 import { BeeMascot } from '../../components/BeeMascot';
 import { Button, Modal } from '../../components/ui';
-import { BEHAVIOR_ICONS, ENTRY_TYPES, EVENT_ICONS } from '../../utils/constants';
+import { BEHAVIOR_ICONS, ENTRY_TYPES, EVENT_ICONS, STICKERS } from '../../utils/constants';
 import { lookupLegoSetImage } from '../../services/lego';
 import styles from './Calendar.module.css';
 
@@ -26,6 +26,14 @@ const addDaysToDateStr = (dateStr, amount) => {
   const date = new Date(Date.UTC(year, month - 1, dayOfMonth));
   date.setUTCDate(date.getUTCDate() + amount);
   return date.toISOString().split('T')[0];
+};
+
+const formatWeekRangeLabel = (weekStart) => {
+  const weekEnd = addDays(weekStart, 6);
+  const sameMonth = isSameMonth(weekStart, weekEnd);
+  const startLabel = format(weekStart, sameMonth ? 'MMM d' : 'MMM d, yyyy');
+  const endLabel = format(weekEnd, 'MMM d, yyyy');
+  return `${startLabel} – ${endLabel}`;
 };
 
 export const Calendar = () => {
@@ -51,12 +59,14 @@ export const Calendar = () => {
     loading 
   } = useHive();
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [viewMode, setViewMode] = useState('month');
   const [selectedDate, setSelectedDate] = useState(null);
   const [showAddEntry, setShowAddEntry] = useState(false);
   const [selectedChildIds, setSelectedChildIds] = useState([]);
   const [isFamilyActivity, setIsFamilyActivity] = useState(false);
   const [entryTab, setEntryTab] = useState('activity');
   const [selectedIcon, setSelectedIcon] = useState(null);
+  const [selectedSticker, setSelectedSticker] = useState(null);
   const [entryNote, setEntryNote] = useState('');
   const [eventTitle, setEventTitle] = useState('');
   const [dayOffEndDate, setDayOffEndDate] = useState('');
@@ -156,6 +166,7 @@ export const Calendar = () => {
 
   const clearIconSelection = () => {
     setSelectedIcon(null);
+    setSelectedSticker(null);
     clearLegoState();
   };
 
@@ -215,11 +226,12 @@ export const Calendar = () => {
         }
       } else {
         const type = entryTab === 'good' ? ENTRY_TYPES.GOOD : ENTRY_TYPES.BAD;
+        const sticker = entryTab === 'good' ? selectedSticker : null;
         for (const childId of selectedChildIds) {
-          await addEntry(childId, type, selectedIcon, dateStr, entryNote);
+          await addEntry(childId, type, selectedIcon, dateStr, entryNote, null, sticker);
         }
       }
-      
+
       resetModal();
     } finally {
       setSaving(false);
@@ -232,6 +244,7 @@ export const Calendar = () => {
     setIsFamilyActivity(false);
     setEntryTab('activity');
     setSelectedIcon(null);
+    setSelectedSticker(null);
     setEntryNote('');
     setEventTitle('');
     setDayOffEndDate('');
@@ -334,8 +347,8 @@ export const Calendar = () => {
   const renderCells = () => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(monthStart);
-    const startDate = startOfWeek(monthStart);
-    const endDate = endOfWeek(monthEnd);
+    const startDate = viewMode === 'week' ? startOfWeek(currentMonth) : startOfWeek(monthStart);
+    const endDate = viewMode === 'week' ? addDays(startDate, 6) : endOfWeek(monthEnd);
 
     const rows = [];
     let day = startDate;
@@ -350,9 +363,10 @@ export const Calendar = () => {
         const dayEntries = getEntriesForDate(cloneDay);
         const dayActivities = dayEntries.filter((e) => e.type === 'activity' || e.type === 'family_activity');
         const dayGifts = dayEntries.filter((e) => e.type === 'gift');
+        const dayStickers = dayEntries.filter((e) => e.sticker);
         const dailyHoney = getDailyHoneyByChild(cloneDay);
         const dayHolidays = settings.showHolidays ? getHolidaysForDate(format(cloneDay, 'yyyy-MM-dd')) : [];
-        const isCurrentMonth = isSameMonth(cloneDay, monthStart);
+        const isCurrentMonth = viewMode === 'week' || isSameMonth(cloneDay, monthStart);
         const isToday = isSameDay(cloneDay, today);
         const isSelected = selectedDate && isSameDay(cloneDay, selectedDate);
         const isHoliday = dayHolidays.length > 0;
@@ -425,6 +439,24 @@ export const Calendar = () => {
                   )
                 ))}
                 {dayGifts.length > 2 && <span className={styles.activityCount}>+{dayGifts.length - 2}</span>}
+              </div>
+            )}
+
+            {dayStickers.length > 0 && (
+              <div className={styles.dayStickerIcons}>
+                {dayStickers.slice(0, 2).map((entry) => {
+                  const sticker = STICKERS.find((s) => s.id === entry.sticker);
+                  return sticker ? (
+                    <img
+                      key={entry.id}
+                      src={sticker.src}
+                      alt={sticker.label}
+                      title={sticker.label}
+                      className={styles.dayStickerThumb}
+                    />
+                  ) : null;
+                })}
+                {dayStickers.length > 2 && <span className={styles.activityCount}>+{dayStickers.length - 2}</span>}
               </div>
             )}
 
@@ -607,6 +639,12 @@ export const Calendar = () => {
                         ) : (
                           <span>{entry.icon}</span>
                         )}
+                        {entry.sticker && (() => {
+                          const sticker = STICKERS.find((s) => s.id === entry.sticker);
+                          return sticker ? (
+                            <img src={sticker.src} alt={sticker.label} title={sticker.label} className={styles.entryStickerImage} />
+                          ) : null;
+                        })()}
                         {!isActivity && entry.type !== 'gift' && (
                           <span className={entry.honey > 0 ? styles.honeyPositive : styles.honeyNegative}>
                             {entry.honey > 0 ? '+' : ''}{entry.honey}
@@ -667,26 +705,52 @@ export const Calendar = () => {
           ←
         </button>
         <div className={styles.monthNav}>
-          <button className={styles.navButton} onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
+          <button
+            className={styles.navButton}
+            onClick={() => setCurrentMonth(viewMode === 'week' ? addDays(currentMonth, -7) : subMonths(currentMonth, 1))}
+          >
             ‹
           </button>
           <h2 className={styles.monthTitle}>
-            {format(currentMonth, 'MMMM yyyy')}
+            {viewMode === 'week'
+              ? formatWeekRangeLabel(startOfWeek(currentMonth))
+              : format(currentMonth, 'MMMM yyyy')}
           </h2>
-          <button className={styles.navButton} onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
+          <button
+            className={styles.navButton}
+            onClick={() => setCurrentMonth(viewMode === 'week' ? addDays(currentMonth, 7) : addMonths(currentMonth, 1))}
+          >
             ›
           </button>
         </div>
-        <button 
-          className={`${styles.holidayToggle} ${settings.showHolidays ? styles.holidayToggleActive : ''}`}
-          onClick={() => setShowHolidays(!settings.showHolidays)}
-          title="Show Israeli Holidays"
-        >
-          🇮🇱
-        </button>
+        <div className={styles.headerActions}>
+          <div className={styles.viewModeToggle}>
+            <button
+              type="button"
+              className={`${styles.viewModeButton} ${viewMode === 'month' ? styles.viewModeButtonActive : ''}`}
+              onClick={() => setViewMode('month')}
+            >
+              Month
+            </button>
+            <button
+              type="button"
+              className={`${styles.viewModeButton} ${viewMode === 'week' ? styles.viewModeButtonActive : ''}`}
+              onClick={() => setViewMode('week')}
+            >
+              Week
+            </button>
+          </div>
+          <button
+            className={`${styles.holidayToggle} ${settings.showHolidays ? styles.holidayToggleActive : ''}`}
+            onClick={() => setShowHolidays(!settings.showHolidays)}
+            title="Show Israeli Holidays"
+          >
+            🇮🇱
+          </button>
+        </div>
       </div>
 
-      <div className={styles.calendar}>
+      <div className={`${styles.calendar} ${viewMode === 'week' ? styles.calendarWeekView : ''}`}>
         <div className={styles.weekHeader}>
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
             <div key={day} className={styles.weekDay}>{day}</div>
@@ -723,21 +787,21 @@ export const Calendar = () => {
           <div className={styles.entryTabs}>
             <button
               className={`${styles.entryTab} ${entryTab === 'activity' ? styles.entryTabActive : ''}`}
-              onClick={() => { setEntryTab('activity'); setSelectedIcon(null); }}
+              onClick={() => { setEntryTab('activity'); clearIconSelection(); }}
             >
               <span>🎯</span>
               <span>Activity</span>
             </button>
             <button
               className={`${styles.entryTab} ${entryTab === 'good' ? styles.entryTabActive : ''}`}
-              onClick={() => { setEntryTab('good'); setSelectedIcon(null); }}
+              onClick={() => { setEntryTab('good'); clearIconSelection(); }}
             >
               <span>⭐</span>
               <span>Good</span>
             </button>
             <button
               className={`${styles.entryTab} ${entryTab === 'bad' ? styles.entryTabActive : ''}`}
-              onClick={() => { setEntryTab('bad'); setSelectedIcon(null); }}
+              onClick={() => { setEntryTab('bad'); clearIconSelection(); }}
             >
               <span>💭</span>
               <span>Needs Work</span>
@@ -1091,6 +1155,25 @@ export const Calendar = () => {
                 </>
               ) : (
                 <>
+                  {entryTab === 'good' && (
+                    <div className={styles.noteSection}>
+                      <label className={styles.noteLabel}>Fun sticker (optional)</label>
+                      <div className={styles.stickerPicker}>
+                        {STICKERS.map((sticker) => (
+                          <button
+                            key={sticker.id}
+                            type="button"
+                            className={`${styles.stickerOption} ${selectedSticker === sticker.id ? styles.stickerSelected : ''}`}
+                            onClick={() => setSelectedSticker(selectedSticker === sticker.id ? null : sticker.id)}
+                            title={sticker.label}
+                          >
+                            <img src={sticker.src} alt={sticker.label} className={styles.stickerImg} />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <div className={styles.noteSection}>
                     <label className={styles.noteLabel}>Add a note (optional)</label>
                     <textarea

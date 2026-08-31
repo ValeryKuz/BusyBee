@@ -25,6 +25,7 @@ const mapEntryFromDb = (entry) => ({
   note: entry.note,
   honey: entry.honey,
   imageUrl: entry.image_url || null,
+  sticker: entry.sticker || null,
   createdAt: entry.created_at,
 });
 
@@ -159,11 +160,11 @@ export const HiveProvider = ({ children: childrenProp }) => {
     }
   }, []);
 
-  const addEntry = useCallback(async (childId, type, icon, date = null, note = '', imageUrl = null) => {
+  const addEntry = useCallback(async (childId, type, icon, date = null, note = '', imageUrl = null, sticker = null) => {
     try {
       const entryDate = date || getLocalDate();
       const honeyValue = type === 'good' ? HONEY_VALUES.GOOD_DEFAULT : type === 'bad' ? HONEY_VALUES.BAD_DEFAULT : 0;
-      const newEntry = await db.addEntry(childId, type, icon, entryDate, note, honeyValue, imageUrl);
+      const newEntry = await db.addEntry(childId, type, icon, entryDate, note, honeyValue, imageUrl, sticker);
       setEntries((prev) => [mapEntryFromDb(newEntry), ...prev]);
     } catch (err) {
       console.error('Failed to add entry:', err);
