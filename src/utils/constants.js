@@ -32,6 +32,7 @@ export const BEHAVIOR_ICONS = {
   ],
   gift: [
     { emoji: '🎁', label: 'Gift' },
+    { emoji: '🧱', label: 'Lego', isLego: true },
     { emoji: '🎀', label: 'Surprise' },
     { emoji: '🎈', label: 'Party' },
     { emoji: '🧸', label: 'Toy' },

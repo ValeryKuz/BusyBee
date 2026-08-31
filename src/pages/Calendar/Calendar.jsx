@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   startOfMonth,
@@ -16,7 +16,17 @@ import { useHive } from '../../hooks/useHive';
 import { BeeMascot } from '../../components/BeeMascot';
 import { Button, Modal } from '../../components/ui';
 import { BEHAVIOR_ICONS, ENTRY_TYPES, EVENT_ICONS } from '../../utils/constants';
+import { lookupLegoSetImage } from '../../services/lego';
 import styles from './Calendar.module.css';
+
+const MAX_EVENT_LANES = 3;
+
+const addDaysToDateStr = (dateStr, amount) => {
+  const [year, month, dayOfMonth] = dateStr.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, dayOfMonth));
+  date.setUTCDate(date.getUTCDate() + amount);
+  return date.toISOString().split('T')[0];
+};
 
 export const Calendar = () => {
   const navigate = useNavigate();
@@ -54,6 +64,10 @@ export const Calendar = () => {
   const [editingEvent, setEditingEvent] = useState(null);
   const [editEventDate, setEditEventDate] = useState('');
   const [saving, setSaving] = useState(false);
+  const [legoSetId, setLegoSetId] = useState('');
+  const [legoStatus, setLegoStatus] = useState('idle');
+  const [legoError, setLegoError] = useState('');
+  const [legoResult, setLegoResult] = useState(null);
 
   const today = new Date();
 
@@ -68,6 +82,43 @@ export const Calendar = () => {
     const dateStr = format(date, 'yyyy-MM-dd');
     return events.filter((e) => e.date === dateStr);
   };
+
+  // Groups same-title/icon/note events into contiguous date runs so multi-day
+  // events (e.g. vacations) render as a single spanning bar instead of one
+  // repeated entry per day.
+  const eventRuns = useMemo(() => {
+    const groups = new Map();
+    events.forEach((event) => {
+      const key = `${event.title}|||${event.icon}|||${event.note || ''}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(event);
+    });
+
+    const runs = [];
+    groups.forEach((groupEvents) => {
+      const sorted = [...groupEvents].sort((a, b) => a.date.localeCompare(b.date));
+      let runStart = 0;
+      for (let i = 1; i <= sorted.length; i++) {
+        const prev = sorted[i - 1];
+        const curr = sorted[i];
+        const isContiguous = curr && addDaysToDateStr(prev.date, 1) === curr.date;
+        if (!isContiguous) {
+          const runEvents = sorted.slice(runStart, i);
+          runs.push({
+            id: runEvents[0].id,
+            title: runEvents[0].title,
+            icon: runEvents[0].icon,
+            note: runEvents[0].note,
+            startDate: runEvents[0].date,
+            endDate: runEvents[runEvents.length - 1].date,
+            representative: runEvents[0],
+          });
+          runStart = i;
+        }
+      }
+    });
+    return runs;
+  }, [events]);
 
   const getDayBirthdays = (date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
@@ -94,6 +145,32 @@ export const Calendar = () => {
 
   const handleSelectIcon = (icon) => {
     setSelectedIcon(icon);
+  };
+
+  const clearLegoState = () => {
+    setLegoSetId('');
+    setLegoStatus('idle');
+    setLegoError('');
+    setLegoResult(null);
+  };
+
+  const clearIconSelection = () => {
+    setSelectedIcon(null);
+    clearLegoState();
+  };
+
+  const handleLegoLookup = async () => {
+    setLegoStatus('loading');
+    setLegoError('');
+    try {
+      const result = await lookupLegoSetImage(legoSetId);
+      setLegoResult(result);
+      setLegoStatus('success');
+    } catch (err) {
+      setLegoResult(null);
+      setLegoError(err.message);
+      setLegoStatus('error');
+    }
   };
 
   const handleAddEntry = async () => {
@@ -128,6 +205,14 @@ export const Calendar = () => {
             await addEntry(childId, ENTRY_TYPES.ACTIVITY, selectedIcon, dateStr, entryNote);
           }
         }
+      } else if (entryTab === 'gift') {
+        const imageUrl = legoResult?.imageUrl || null;
+        const finalNote = legoResult
+          ? [`LEGO ${legoResult.setId}`, entryNote.trim()].filter(Boolean).join(' | ')
+          : entryNote;
+        for (const childId of selectedChildIds) {
+          await addEntry(childId, ENTRY_TYPES.GIFT, selectedIcon, dateStr, finalNote, imageUrl);
+        }
       } else {
         const type = entryTab === 'good' ? ENTRY_TYPES.GOOD : ENTRY_TYPES.BAD;
         for (const childId of selectedChildIds) {
@@ -151,6 +236,7 @@ export const Calendar = () => {
     setEventTitle('');
     setDayOffEndDate('');
     setEventParticipants([]);
+    clearLegoState();
   };
 
   const toggleEventParticipant = (participant) => {
@@ -185,8 +271,64 @@ export const Calendar = () => {
   const getIconsForTab = () => {
     if (entryTab === 'good') return BEHAVIOR_ICONS.good;
     if (entryTab === 'bad') return BEHAVIOR_ICONS.bad;
+    if (entryTab === 'gift') return BEHAVIOR_ICONS.gift;
     if (entryTab === 'event') return EVENT_ICONS;
     return BEHAVIOR_ICONS.activity;
+  };
+
+  const selectedIconIsLego = entryTab === 'gift' && getIconsForTab().find((i) => i.emoji === selectedIcon)?.isLego;
+
+  const openEventFromBar = (run) => {
+    setEditingEvent(run.representative);
+    setEditEventDate(run.representative.date);
+  };
+
+  // Computes which event runs are visible in this week, clipped to the
+  // week's date range, and assigns each a stacking lane so overlapping
+  // ranges don't collide (classic month-view "spanning bar" layout).
+  const getWeekEventBars = (weekDays) => {
+    const weekStartStr = format(weekDays[0], 'yyyy-MM-dd');
+    const weekEndStr = format(weekDays[6], 'yyyy-MM-dd');
+
+    const weekRuns = eventRuns
+      .filter((run) => run.endDate >= weekStartStr && run.startDate <= weekEndStr)
+      .map((run) => {
+        const visibleStart = run.startDate < weekStartStr ? weekStartStr : run.startDate;
+        const visibleEnd = run.endDate > weekEndStr ? weekEndStr : run.endDate;
+        const colStart = weekDays.findIndex((d) => format(d, 'yyyy-MM-dd') === visibleStart);
+        const colEnd = weekDays.findIndex((d) => format(d, 'yyyy-MM-dd') === visibleEnd);
+        return { ...run, colStart, colSpan: colEnd - colStart + 1 };
+      })
+      .sort((a, b) => a.colStart - b.colStart || b.colSpan - a.colSpan);
+
+    const laneEnds = [];
+    weekRuns.forEach((run) => {
+      let lane = laneEnds.findIndex((endCol) => endCol < run.colStart);
+      if (lane === -1) {
+        lane = laneEnds.length;
+        laneEnds.push(run.colStart + run.colSpan - 1);
+      } else {
+        laneEnds[lane] = run.colStart + run.colSpan - 1;
+      }
+      run.lane = lane;
+    });
+
+    const visibleBars = weekRuns.filter((run) => run.lane < MAX_EVENT_LANES);
+    const overflowByCol = {};
+    weekRuns
+      .filter((run) => run.lane >= MAX_EVENT_LANES)
+      .forEach((run) => {
+        for (let c = run.colStart; c < run.colStart + run.colSpan; c++) {
+          overflowByCol[c] = (overflowByCol[c] || 0) + 1;
+        }
+      });
+
+    const laneCount = Math.min(
+      weekRuns.length ? Math.max(...weekRuns.map((r) => r.lane)) + 1 : 0,
+      MAX_EVENT_LANES
+    );
+
+    return { visibleBars, overflowByCol, laneCount };
   };
 
   const renderCells = () => {
@@ -196,32 +338,41 @@ export const Calendar = () => {
     const endDate = endOfWeek(monthEnd);
 
     const rows = [];
-    let days = [];
     let day = startDate;
 
     while (day <= endDate) {
-      for (let i = 0; i < 7; i++) {
-        const cloneDay = day;
-        const dayEvents = getEventsForDate(day);
-        const dayBirthdays = getDayBirthdays(day);
-        const dayEntries = getEntriesForDate(day);
-        const dayActivities = dayEntries.filter((e) => e.type === 'activity' || e.type === 'family_activity');
-        const dailyHoney = getDailyHoneyByChild(day);
-        const dayHolidays = settings.showHolidays ? getHolidaysForDate(format(day, 'yyyy-MM-dd')) : [];
-        const isCurrentMonth = isSameMonth(day, monthStart);
-        const isToday = isSameDay(day, today);
-        const isSelected = selectedDate && isSameDay(day, selectedDate);
-        const isHoliday = dayHolidays.length > 0;
+      const weekDays = Array.from({ length: 7 }, (_, i) => addDays(day, i));
+      const { visibleBars, overflowByCol, laneCount } = getWeekEventBars(weekDays);
+      const barsAreaHeight = laneCount > 0 ? laneCount * 20 : 0;
 
-        days.push(
+      const days = weekDays.map((cloneDay, colIndex) => {
+        const dayBirthdays = getDayBirthdays(cloneDay);
+        const dayEntries = getEntriesForDate(cloneDay);
+        const dayActivities = dayEntries.filter((e) => e.type === 'activity' || e.type === 'family_activity');
+        const dayGifts = dayEntries.filter((e) => e.type === 'gift');
+        const dailyHoney = getDailyHoneyByChild(cloneDay);
+        const dayHolidays = settings.showHolidays ? getHolidaysForDate(format(cloneDay, 'yyyy-MM-dd')) : [];
+        const isCurrentMonth = isSameMonth(cloneDay, monthStart);
+        const isToday = isSameDay(cloneDay, today);
+        const isSelected = selectedDate && isSameDay(cloneDay, selectedDate);
+        const isHoliday = dayHolidays.length > 0;
+        const dayOverflow = overflowByCol[colIndex] || 0;
+
+        return (
           <div
-            key={day.toString()}
+            key={cloneDay.toString()}
             onClick={() => isCurrentMonth && setSelectedDate(cloneDay)}
             className={`${styles.cell} ${!isCurrentMonth ? styles.disabled : ''} ${isToday ? styles.today : ''} ${isSelected ? styles.selected : ''} ${isHoliday ? styles.holiday : ''}`}
           >
-            <span className={`${styles.dayNumber} ${isToday ? styles.todayNumber : ''}`}>
-              {format(day, 'd')}
-            </span>
+            <div className={styles.dayNumberRow}>
+              <span className={`${styles.dayNumber} ${isToday ? styles.todayNumber : ''}`}>
+                {format(cloneDay, 'd')}
+              </span>
+            </div>
+
+            {barsAreaHeight > 0 && (
+              <div className={styles.eventBarsSpacer} style={{ height: barsAreaHeight }} />
+            )}
 
             {dayHolidays.length > 0 && (
               <div className={styles.holidayPreview}>
@@ -238,23 +389,6 @@ export const Calendar = () => {
                     <span className={styles.birthdayName}>{b.name}</span>
                   </div>
                 ))}
-              </div>
-            )}
-
-            {dayEvents.length > 0 && (
-              <div className={styles.dayEvents}>
-                {dayEvents.slice(0, 2).map((event) => {
-                  const { participants } = extractParticipantsFromNote(event.note);
-                  return (
-                    <div key={event.id} className={styles.eventItem}>
-                      <div className={styles.eventIconWrapper}>
-                        {participants && <span className={styles.eventParticipants}>{participants}</span>}
-                        <span className={styles.eventIcon}>{event.icon}</span>
-                      </div>
-                      <span className={styles.eventTitle}>{event.title}</span>
-                    </div>
-                  );
-                })}
               </div>
             )}
 
@@ -275,6 +409,25 @@ export const Calendar = () => {
               </div>
             )}
 
+            {dayGifts.length > 0 && (
+              <div className={styles.giftIcons}>
+                {dayGifts.slice(0, 2).map((gift) => (
+                  gift.imageUrl ? (
+                    <img
+                      key={gift.id}
+                      src={gift.imageUrl}
+                      alt=""
+                      title={gift.note || 'Gift'}
+                      className={styles.giftThumb}
+                    />
+                  ) : (
+                    <span key={gift.id} className={styles.activityIcon} title={gift.note || 'Gift'}>{gift.icon}</span>
+                  )
+                ))}
+                {dayGifts.length > 2 && <span className={styles.activityCount}>+{dayGifts.length - 2}</span>}
+              </div>
+            )}
+
             {Object.keys(dailyHoney).length > 0 && (
               <div className={styles.honeyIndicators}>
                 {Object.values(dailyHoney).slice(0, 3).map((data, idx) => (
@@ -288,16 +441,47 @@ export const Calendar = () => {
                 ))}
               </div>
             )}
+
+            {dayOverflow > 0 && (
+              <span className={styles.eventOverflow}>+{dayOverflow} more</span>
+            )}
           </div>
         );
-        day = addDays(day, 1);
-      }
+      });
+
       rows.push(
-        <div key={day.toString()} className={styles.row}>
+        <div key={weekDays[0].toString()} className={styles.row}>
           {days}
+          {visibleBars.length > 0 && (
+            <div className={styles.eventBarsLayer}>
+              {visibleBars.map((run) => {
+                const { participants } = extractParticipantsFromNote(run.note);
+                return (
+                  <button
+                    key={`${run.id}-${weekDays[0].toString()}`}
+                    type="button"
+                    className={styles.eventBar}
+                    style={{ gridColumn: `${run.colStart + 1} / span ${run.colSpan}`, gridRow: run.lane + 1 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openEventFromBar(run);
+                    }}
+                    title={run.startDate !== run.endDate
+                      ? `${run.title} (${format(new Date(run.startDate + 'T00:00:00'), 'MMM d')} - ${format(new Date(run.endDate + 'T00:00:00'), 'MMM d')})`
+                      : run.title}
+                  >
+                    <span className={styles.eventBarIcon}>{run.icon}</span>
+                    {participants && <span className={styles.eventBarParticipants}>{participants}</span>}
+                    <span className={styles.eventBarTitle}>{run.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       );
-      days = [];
+
+      day = addDays(day, 7);
     }
     return rows;
   };
@@ -418,8 +602,12 @@ export const Calendar = () => {
                     <div key={entry.id} className={`${styles.activityItem} ${entry.note ? styles.hasNote : ''}`}>
                       <div className={styles.activityMain}>
                         <span>{isFamilyEntry ? '👨‍👩‍👧‍👦' : child?.avatar}</span>
-                        <span>{entry.icon}</span>
-                        {!isActivity && (
+                        {entry.imageUrl ? (
+                          <img src={entry.imageUrl} alt="" className={styles.entryImage} />
+                        ) : (
+                          <span>{entry.icon}</span>
+                        )}
+                        {!isActivity && entry.type !== 'gift' && (
                           <span className={entry.honey > 0 ? styles.honeyPositive : styles.honeyNegative}>
                             {entry.honey > 0 ? '+' : ''}{entry.honey}
                           </span>
@@ -553,6 +741,13 @@ export const Calendar = () => {
             >
               <span>💭</span>
               <span>Needs Work</span>
+            </button>
+            <button
+              className={`${styles.entryTab} ${entryTab === 'gift' ? styles.entryTabActive : ''}`}
+              onClick={() => { setEntryTab('gift'); clearIconSelection(); }}
+            >
+              <span>🎁</span>
+              <span>Gift</span>
             </button>
             <button
               className={`${styles.entryTab} ${entryTab === 'event' ? styles.entryTabActive : ''}`}
@@ -830,26 +1025,88 @@ export const Calendar = () => {
                 <span className={styles.selectedIconBadge}>{selectedIcon}</span>
                 <button
                   className={styles.changeChildBtn}
-                  onClick={() => setSelectedIcon(null)}
+                  onClick={clearIconSelection}
                 >
                   Change
                 </button>
               </div>
 
-              <div className={styles.noteSection}>
-                <label className={styles.noteLabel}>Add a note (optional)</label>
-                <textarea
-                  className={styles.noteInput}
-                  placeholder="What happened? Any details..."
-                  value={entryNote}
-                  onChange={(e) => setEntryNote(e.target.value)}
-                  rows={3}
-                />
-              </div>
+              {selectedIconIsLego ? (
+                <>
+                  <div className={styles.noteSection}>
+                    <label className={styles.noteLabel}>Lego set ID</label>
+                    <div className={styles.legoLookupRow}>
+                      <input
+                        type="text"
+                        className={styles.noteInput}
+                        style={{ minHeight: 'auto' }}
+                        placeholder="e.g. 75192"
+                        value={legoSetId}
+                        onChange={(e) => setLegoSetId(e.target.value)}
+                      />
+                      <Button
+                        variant="secondary"
+                        size="medium"
+                        onClick={handleLegoLookup}
+                        disabled={legoStatus === 'loading' || !legoSetId.trim()}
+                      >
+                        {legoStatus === 'loading' ? 'Looking up...' : 'Look up'}
+                      </Button>
+                    </div>
+                    {legoStatus === 'error' && <p className={styles.legoError}>{legoError}</p>}
+                    {legoResult && (
+                      <div className={styles.legoPreview}>
+                        <img
+                          src={legoResult.imageUrl}
+                          alt={`Lego set ${legoResult.setId}`}
+                          className={styles.legoPreviewImage}
+                        />
+                        <div className={styles.legoPreviewInfo}>
+                          <p className={styles.legoPreviewName}>Set {legoResult.setId}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
-              <Button variant="primary" size="large" fullWidth onClick={handleAddEntry} disabled={saving}>
-                {saving ? 'Saving...' : 'Add Entry'}
-              </Button>
+                  <div className={styles.noteSection}>
+                    <label className={styles.noteLabel}>Add a note (optional)</label>
+                    <textarea
+                      className={styles.noteInput}
+                      placeholder="Who gave it, where it's from..."
+                      value={entryNote}
+                      onChange={(e) => setEntryNote(e.target.value)}
+                      rows={2}
+                    />
+                  </div>
+
+                  <Button
+                    variant="primary"
+                    size="large"
+                    fullWidth
+                    onClick={handleAddEntry}
+                    disabled={saving || !legoResult}
+                  >
+                    {saving ? 'Saving...' : 'Add Lego Gift'}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className={styles.noteSection}>
+                    <label className={styles.noteLabel}>Add a note (optional)</label>
+                    <textarea
+                      className={styles.noteInput}
+                      placeholder="What happened? Any details..."
+                      value={entryNote}
+                      onChange={(e) => setEntryNote(e.target.value)}
+                      rows={3}
+                    />
+                  </div>
+
+                  <Button variant="primary" size="large" fullWidth onClick={handleAddEntry} disabled={saving}>
+                    {saving ? 'Saving...' : 'Add Entry'}
+                  </Button>
+                </>
+              )}
             </div>
           )}
         </div>
