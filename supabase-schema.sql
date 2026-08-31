@@ -21,6 +21,7 @@ CREATE TABLE entries (
   icon TEXT NOT NULL,
   note TEXT DEFAULT '',
   honey INTEGER DEFAULT 0,
+  image_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

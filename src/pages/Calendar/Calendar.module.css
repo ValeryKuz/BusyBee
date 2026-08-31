@@ -189,6 +189,7 @@
 }
 
 .row {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
 }
@@ -270,6 +271,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 55px;
+  direction: rtl;
+  unicode-bidi: plaintext;
+}
+
+.dayNumberRow {
+  height: 24px;
+  display: flex;
+  align-items: center;
 }
 
 .dayNumber {
@@ -315,52 +324,83 @@
   50% { transform: scale(1.1); }
 }
 
-.dayEvents {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.eventItem {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  overflow: hidden;
-}
-
-.eventIconWrapper {
-  position: relative;
-  flex-shrink: 0;
-}
-
-.eventParticipants {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.5rem;
-  line-height: 1;
-  opacity: 0.85;
-  white-space: nowrap;
-}
-
-.eventIcon {
-  font-size: 0.85rem;
-}
-
 .eventParticipantsModal {
   font-size: 0.9rem;
   margin-right: var(--spacing-xs);
 }
 
-.eventTitle {
+/* Event spanning bars — overlaid on top of the week row so multi-day
+   events (vacations, trips) render as one continuous bar, like a real
+   calendar, instead of a repeated entry on every day. */
+.eventBarsSpacer {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.eventBarsLayer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 30px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: 18px;
+  gap: 2px 3px;
+  padding: 0 3px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.eventBar {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  padding: 0 5px;
+  border: none;
+  border-radius: 5px;
+  background: linear-gradient(135deg, #FCFFA6, #C1FFD7);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   font-family: var(--font-heading);
-  font-size: 1rem;
+  font-size: 0.65rem;
   font-weight: 600;
   color: var(--color-dark-text);
-  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.eventBar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.eventBarIcon {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.eventBarParticipants {
+  flex-shrink: 0;
+  font-size: 0.6rem;
+  line-height: 1;
+}
+
+.eventBarTitle {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eventOverflow {
+  align-self: flex-start;
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: #A890E8;
+  background: #E4DBFF;
+  padding: 1px 4px;
+  border-radius: var(--radius-small);
 }
 
 .activityIcons {
@@ -380,6 +420,21 @@
   background: #E4DBFF;
   padding: 1px 4px;
   border-radius: var(--radius-small);
+}
+
+.giftIcons {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+
+.giftThumb {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: var(--color-white);
 }
 
 .honeyIndicators {
@@ -491,6 +546,14 @@
   margin: 0;
   line-height: 1.3;
   max-width: 150px;
+}
+
+.entryImage {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: var(--color-white);
 }
 
 .activityItem:hover .deleteActivityBtn {
@@ -866,6 +929,53 @@
   box-shadow: 0 0 0 3px rgba(193, 255, 215, 0.3);
 }
 
+.legoLookupRow {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.legoLookupRow .noteInput {
+  flex: 1;
+}
+
+.legoError {
+  font-size: var(--font-size-sm);
+  color: #FF7A7A;
+  margin: 0;
+}
+
+.legoPreview {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  background: #FEFFD6;
+  border-radius: var(--radius-medium);
+}
+
+.legoPreviewImage {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: var(--radius-small);
+  background: var(--color-white);
+  flex-shrink: 0;
+}
+
+.legoPreviewInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.legoPreviewName {
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  color: var(--color-dark-text);
+  margin: 0;
+}
+
 /* Tablet Landscape */
 @media (min-width: 768px) and (orientation: landscape) {
   .page {
@@ -890,8 +1000,17 @@
     font-size: var(--font-size-md);
   }
 
-  .eventIcon {
-    font-size: 1.2rem;
+  .eventBarsLayer {
+    top: 34px;
+    grid-auto-rows: 20px;
+  }
+
+  .eventBar {
+    font-size: 0.7rem;
+  }
+
+  .eventBarIcon {
+    font-size: 0.85rem;
   }
 
   .activityIcon {
@@ -933,15 +1052,36 @@
     min-height: 55px;
     padding: 2px;
   }
-  
+
   .dayNumber {
     font-size: var(--font-size-xs);
   }
-  
-  .eventIcon {
-    font-size: 0.8rem;
+
+  .dayNumberRow {
+    height: 18px;
   }
-  
+
+  .eventBarsLayer {
+    top: 20px;
+    grid-auto-rows: 15px;
+    gap: 1px 2px;
+    padding: 0 1px;
+  }
+
+  .eventBar {
+    padding: 0 3px;
+    font-size: 0.55rem;
+    border-radius: 4px;
+  }
+
+  .eventBarIcon {
+    font-size: 0.6rem;
+  }
+
+  .eventBarParticipants {
+    display: none;
+  }
+
   .honeyDot {
     width: 14px;
     height: 14px;

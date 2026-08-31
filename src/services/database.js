@@ -65,7 +65,7 @@ export const fetchEntries = async () => {
   return data || [];
 };
 
-export const addEntry = async (childId, type, icon, date = null, note = '', honey = 0) => {
+export const addEntry = async (childId, type, icon, date = null, note = '', honey = 0, imageUrl = null) => {
   const familyId = await getFamilyId();
   const entryDate = date || getLocalDate();
   const { data, error } = await supabase
@@ -77,11 +77,12 @@ export const addEntry = async (childId, type, icon, date = null, note = '', hone
       icon,
       note,
       honey,
+      image_url: imageUrl,
       family_id: familyId
     }])
     .select()
     .single();
-  
+
   if (error) throw error;
   return data;
 };
@@ -93,6 +94,7 @@ export const updateEntry = async (id, updates) => {
   if (updates.note !== undefined) dbUpdates.note = updates.note;
   if (updates.honey !== undefined) dbUpdates.honey = updates.honey;
   if (updates.date !== undefined) dbUpdates.entry_date = updates.date;
+  if (updates.imageUrl !== undefined) dbUpdates.image_url = updates.imageUrl;
 
   const { data, error } = await supabase
     .from('entries')
