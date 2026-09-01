@@ -8,11 +8,19 @@ export const BehaviorButtons = ({ childId }) => {
   const { addEntry } = useHive();
   const [activeTab, setActiveTab] = useState('good');
   const [lastAdded, setLastAdded] = useState(null);
+  const [pendingEmoji, setPendingEmoji] = useState(null);
 
-  const handleIconClick = (item, type) => {
-    addEntry(childId, type, item.emoji);
-    setLastAdded({ ...item, type: activeTab });
-    setTimeout(() => setLastAdded(null), 1500);
+  const handleIconClick = async (item, type) => {
+    if (pendingEmoji) return;
+
+    setPendingEmoji(item.emoji);
+    try {
+      await addEntry(childId, type, item.emoji);
+      setLastAdded({ ...item, type: activeTab });
+      setTimeout(() => setLastAdded(null), 1500);
+    } finally {
+      setPendingEmoji(null);
+    }
   };
 
   const getItems = () => {
@@ -55,6 +63,7 @@ export const BehaviorButtons = ({ childId }) => {
             key={item.emoji}
             className={`${styles.iconButton} ${lastAdded?.emoji === item.emoji ? styles.iconAdded : ''}`}
             onClick={() => handleIconClick(item, getEntryType())}
+            disabled={pendingEmoji === item.emoji}
           >
             <span className={styles.icon}>{item.emoji}</span>
             <span className={styles.label}>{item.label}</span>

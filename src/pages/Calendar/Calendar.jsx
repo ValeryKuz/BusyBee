@@ -631,7 +631,7 @@ export const Calendar = () => {
                   <div
                     key={event.id}
                     className={`${styles.activityItem} ${(participants || cleanNote) ? styles.hasNote : ''}`}
-                    style={stripeBg ? { paddingLeft: 14 } : undefined}
+                    style={stripeBg ? { paddingLeft: 18 } : undefined}
                   >
                     {stripeBg && <span className={styles.eventKidStripe} style={{ background: stripeBg }} />}
                     <div className={styles.activityMain}>

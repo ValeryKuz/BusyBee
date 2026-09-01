@@ -1,6 +1,7 @@
 .page {
   min-height: 100vh;
   min-height: 100dvh;
+  padding: 1.5rem;
   padding: var(--spacing-lg);
   max-width: 1400px;
   margin: 0 auto;
@@ -13,28 +14,36 @@
 .addForm {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
   gap: var(--spacing-lg);
 }
 
 .eventsList {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
   gap: var(--spacing-md);
 }
 
 .foodSection {
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
   gap: var(--spacing-sm);
 }
 
 .foodRow {
   display: flex;
   align-items: center;
+  gap: 1rem;
   gap: var(--spacing-md);
+  padding: 0.75rem 1rem;
   padding: var(--spacing-sm) var(--spacing-md);
+  background: #FFFFFF;
   background: var(--color-white);
+  border-radius: 20px;
   border-radius: var(--radius-medium);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   box-shadow: var(--shadow-soft);
 }
 
@@ -46,6 +55,7 @@
 .foodRowIcons {
   display: flex;
   flex-wrap: wrap;
+  gap: 0.5rem;
   gap: var(--spacing-xs);
 }
 
@@ -54,7 +64,9 @@
 }
 
 .emptyText {
+  font-size: 1.25rem;
   font-size: var(--font-size-lg);
+  color: #7A7A7A;
   color: var(--color-light-text);
 }
 
@@ -68,13 +80,17 @@
 .greeting {
   display: flex;
   align-items: center;
+  gap: 1rem;
   gap: var(--spacing-md);
 }
 
 .title {
+  font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 2rem;
   font-size: var(--font-size-2xl);
   font-weight: 800;
+  color: #4A4A4A;
   color: var(--color-dark-text);
   margin: 0;
 }
@@ -82,13 +98,16 @@
 
 .nav {
   display: flex;
+  gap: 0.5rem;
   gap: var(--spacing-xs);
 }
 
 .main {
   display: flex;
   flex-direction: column;
+  gap: 2rem;
   gap: var(--spacing-xl);
+  margin-top: 1.5rem;
   margin-top: var(--spacing-lg);
   width: 100%;
 }
@@ -106,20 +125,26 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
   margin-bottom: var(--spacing-md);
 }
 
 .sectionTitle {
+  font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 1.5rem;
   font-size: var(--font-size-xl);
   font-weight: 800;
+  color: #4A4A4A;
   color: var(--color-dark-text);
   margin: 0;
 }
 
 .topRow {
   display: flex;
+  gap: 2rem;
   gap: var(--spacing-xl);
+  padding: 1rem 0;
   padding: var(--spacing-md) 0;
   align-items: stretch;
   position: relative;
@@ -137,6 +162,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
   gap: var(--spacing-sm);
 }
 
@@ -149,6 +175,7 @@
 .childrenGrid {
   display: flex;
   flex-wrap: wrap;
+  gap: 1rem;
   gap: var(--spacing-md);
   align-content: flex-start;
 }
@@ -160,9 +187,12 @@
 
 .dailyFunCard {
   background: linear-gradient(135deg, #FFE5EC 0%, #E0F4FF 50%, #E5FFE0 100%);
+  border-radius: 30px;
   border-radius: var(--radius-large);
+  padding: 1rem;
   padding: var(--spacing-md);
   text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   box-shadow: var(--shadow-soft);
   animation: dailyFunBounce 0.6s ease-out;
   display: flex;
@@ -178,10 +208,14 @@
 }
 
 .dailyFunTitle {
+  font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 1.25rem;
   font-size: var(--font-size-lg);
   font-weight: 800;
+  color: #4A4A4A;
   color: var(--color-dark-text);
+  margin: 0 0 0.75rem 0;
   margin: 0 0 var(--spacing-sm) 0;
   flex-shrink: 0;
 }
@@ -190,6 +224,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.5rem;
   gap: var(--spacing-xs);
   flex: 1;
   justify-content: center;
@@ -213,39 +248,52 @@
 }
 
 .dailyFunName {
+  font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 1.5rem;
   font-size: var(--font-size-xl);
   font-weight: 700;
+  color: #4A4A4A;
   color: var(--color-dark-text);
 }
 
 .dailyFunSound {
+  font-size: 1rem;
   font-size: var(--font-size-md);
+  color: #7A7A7A;
   color: var(--color-light-text);
   font-style: italic;
 }
 
 .dailyFunJokeSetup {
+  font-size: 1rem;
   font-size: var(--font-size-md);
+  color: #4A4A4A;
   color: var(--color-dark-text);
   font-weight: 600;
+  margin-bottom: 0.75rem;
   margin-bottom: var(--spacing-sm);
 }
 
 .dailyFunJokePunchline {
+  font-size: 1.25rem;
   font-size: var(--font-size-lg);
   color: #7B68EE;
   font-weight: 700;
 }
 
 .dailyFunFact {
+  font-size: 1rem;
   font-size: var(--font-size-md);
+  color: #4A4A4A;
   color: var(--color-dark-text);
   line-height: 1.5;
 }
 
 .dailyFunColorName {
+  font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 2rem;
   font-size: var(--font-size-2xl);
   font-weight: 800;
 }
@@ -256,21 +304,27 @@
 }
 
 .dailyFunChallenge {
+  font-size: 1.25rem;
   font-size: var(--font-size-lg);
+  color: #4A4A4A;
   color: var(--color-dark-text);
   font-weight: 600;
   line-height: 1.4;
 }
 
 .dailyFunWord {
+  font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 2rem;
   font-size: var(--font-size-2xl);
   font-weight: 800;
   color: #FF6B9D;
 }
 
 .dailyFunMeaning {
+  font-size: 1rem;
   font-size: var(--font-size-md);
+  color: #7A7A7A;
   color: var(--color-light-text);
 }
 
@@ -278,6 +332,7 @@
 .dailyFunCategoryGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
   gap: var(--spacing-sm);
 }
 
@@ -285,10 +340,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.5rem;
   gap: var(--spacing-xs);
+  padding: 1rem;
   padding: var(--spacing-md);
   background: #F5F5F5;
   border: 3px solid transparent;
+  border-radius: 20px;
   border-radius: var(--radius-medium);
   cursor: pointer;
   transition: all 0.2s;
@@ -309,8 +367,10 @@
 }
 
 .dailyFunCategoryLabel {
+  font-size: 0.75rem;
   font-size: var(--font-size-xs);
   font-weight: 600;
+  color: #4A4A4A;
   color: var(--color-dark-text);
   text-align: center;
 }
@@ -337,13 +397,16 @@
   align-items: center;
   justify-content: center;
   min-height: 60vh;
+  gap: 1.5rem;
   gap: var(--spacing-lg);
   text-align: center;
 }
 
 .loadingState p,
 .errorState p {
+  font-size: 1.25rem;
   font-size: var(--font-size-lg);
+  color: #4A4A4A;
   color: var(--color-dark-text);
 }
 
@@ -352,21 +415,28 @@
 }
 
 .errorMessage {
+  font-size: 0.875rem;
   font-size: var(--font-size-sm);
+  color: #7A7A7A;
   color: var(--color-light-text);
   max-width: 300px;
 }
 
 .emptyState {
   text-align: center;
+  padding: 2rem;
   padding: var(--spacing-xl);
+  background: #FFFFFF;
   background: var(--color-white);
+  border-radius: 30px;
   border-radius: var(--radius-large);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   box-shadow: var(--shadow-soft);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
   gap: var(--spacing-md);
   height: 300px;
 }
@@ -378,6 +448,7 @@
 .eventsGrid {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
   gap: var(--spacing-md);
 }
 
@@ -385,19 +456,25 @@
 .formGroup {
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
   gap: var(--spacing-sm);
 }
 
 .label {
+  font-size: 1rem;
   font-size: var(--font-size-md);
   font-weight: 700;
+  color: #4A4A4A;
   color: var(--color-dark-text);
 }
 
 .input {
+  padding: 1rem;
   padding: var(--spacing-md);
   border: 2px solid #E0FFEB;
+  border-radius: 20px;
   border-radius: var(--radius-medium);
+  font-size: 1.25rem;
   font-size: var(--font-size-lg);
   transition: border-color 0.2s;
   background: white;
@@ -412,6 +489,7 @@
 .avatarGrid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
+  gap: 0.75rem;
   gap: var(--spacing-sm);
 }
 
@@ -421,6 +499,7 @@
   font-size: 1.8rem;
   background: #DAF0FF;
   border: 3px solid transparent;
+  border-radius: 20px;
   border-radius: var(--radius-medium);
   cursor: pointer;
   transition: all 0.2s;
@@ -431,11 +510,13 @@
 
 .avatarOption:hover {
   transform: scale(1.1);
+  background: #FFFFFF;
   background: var(--color-white);
 }
 
 .avatarSelected {
   border-color: #C1FFD7;
+  background: #FFFFFF;
   background: var(--color-white);
   box-shadow: 0 0 15px rgba(193, 255, 215, 0.6);
 }
@@ -444,42 +525,53 @@
 .settingsForm {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
   gap: var(--spacing-lg);
 }
 
 .settingsSection {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
   gap: var(--spacing-md);
 }
 
 .settingsSectionTitle {
+  font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 1.25rem;
   font-size: var(--font-size-lg);
   font-weight: 700;
+  color: #4A4A4A;
   color: var(--color-dark-text);
   margin: 0;
 }
 
 .settingsDescription {
+  font-size: 0.875rem;
   font-size: var(--font-size-sm);
+  color: #7A7A7A;
   color: var(--color-light-text);
   margin: 0;
 }
 
 .settingsButtons {
   display: flex;
+  gap: 0.75rem;
   gap: var(--spacing-sm);
   flex-wrap: wrap;
 }
 
 .importStatus {
+  font-size: 0.875rem;
   font-size: var(--font-size-sm);
   font-weight: 600;
   color: #5BBF3A;
   margin: 0;
+  padding: 0.75rem;
   padding: var(--spacing-sm);
   background: rgba(193, 255, 215, 0.3);
+  border-radius: 12px;
   border-radius: var(--radius-small);
   text-align: center;
 }
@@ -488,16 +580,21 @@
 .kidsList {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
   gap: var(--spacing-xs);
+  margin-bottom: 1rem;
   margin-bottom: var(--spacing-md);
 }
 
 .kidsListItem {
   display: flex;
   align-items: center;
+  gap: 0.75rem;
   gap: var(--spacing-sm);
+  padding: 0.75rem 1rem;
   padding: var(--spacing-sm) var(--spacing-md);
   background: #DAF0FF;
+  border-radius: 20px;
   border-radius: var(--radius-medium);
 }
 
@@ -508,18 +605,24 @@
 .kidsListName {
   flex: 1;
   font-weight: 600;
+  color: #4A4A4A;
   color: var(--color-dark-text);
 }
 
 .kidsListHoney {
+  font-size: 0.875rem;
   font-size: var(--font-size-sm);
+  color: #7A7A7A;
   color: var(--color-light-text);
 }
 
 .kidsListBirthday {
+  font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 0.875rem;
   font-size: var(--font-size-sm);
   font-weight: 700;
+  color: #A890E8;
   color: var(--color-lavender-dark);
   margin-left: auto;
 }
@@ -532,6 +635,7 @@
   width: 22px;
   height: 22px;
   border-radius: 50%;
+  border: 2px solid #FFFFFF;
   border: 2px solid var(--color-white);
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
   cursor: pointer;
@@ -549,9 +653,13 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 6px;
+  padding: 0.75rem;
   padding: var(--spacing-sm);
+  background: #FFFFFF;
   background: var(--color-white);
+  border-radius: 20px;
   border-radius: var(--radius-medium);
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
   box-shadow: var(--shadow-medium);
   z-index: 10;
 }
@@ -567,6 +675,7 @@
 
 .kidsListColorOption:hover {
   transform: scale(1.15);
+  border-color: #4A4A4A;
   border-color: var(--color-dark-text);
 }
 
@@ -578,7 +687,9 @@
   justify-content: center;
   background: transparent;
   border-radius: 50%;
+  color: #7A7A7A;
   color: var(--color-light-text);
+  font-size: 0.875rem;
   font-size: var(--font-size-sm);
   transition: all 0.2s ease;
 }
@@ -594,18 +705,22 @@
     height: 100vh;
     height: 100dvh;
     overflow: hidden;
+    padding: 1rem;
     padding: var(--spacing-md);
   }
 
   .header {
     flex-shrink: 0;
+    padding-bottom: 0.75rem;
     padding-bottom: var(--spacing-sm);
   }
 
   .topRow {
     flex: 1;
     min-height: 0;
+    padding: 0.75rem 0;
     padding: var(--spacing-sm) 0;
+    gap: 1rem;
     gap: var(--spacing-md);
   }
 
@@ -621,6 +736,7 @@
   }
 
   .childrenGrid {
+    gap: 0.75rem;
     gap: var(--spacing-sm);
     overflow-y: auto;
     max-height: 100%;
@@ -646,18 +762,23 @@
 
   .main {
     flex-shrink: 0;
+    margin-top: 0.75rem;
     margin-top: var(--spacing-sm);
+    gap: 0.75rem;
     gap: var(--spacing-sm);
   }
 
   .sectionTitle {
+    font-size: 1.25rem;
     font-size: var(--font-size-lg);
+    margin-bottom: 0.5rem;
     margin-bottom: var(--spacing-xs);
   }
 
   .eventsList {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 0.75rem;
     gap: var(--spacing-sm);
   }
 
@@ -680,6 +801,7 @@
     flex-wrap: wrap;
     align-content: stretch;
     align-items: stretch;
+    padding: 0.75rem;
     padding: var(--spacing-sm);
     overflow: visible;
   }
@@ -695,6 +817,7 @@
   .emptyState {
     height: auto;
     flex: 1;
+    padding: 1rem;
     padding: var(--spacing-md);
   }
 
@@ -706,19 +829,23 @@
 /* Larger landscape screens - more breathing room */
 @media (min-width: 1024px) and (orientation: landscape) {
   .page {
+    padding: 1.5rem;
     padding: var(--spacing-lg);
   }
 
   .topRow {
+    gap: 1.5rem;
     gap: var(--spacing-lg);
   }
 
   .childrenGrid {
+    gap: 1rem;
     gap: var(--spacing-md);
   }
 
   .eventsList {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
     gap: var(--spacing-md);
   }
 }
@@ -726,10 +853,12 @@
 /* Taller landscape screens (1080px+ height) */
 @media (min-width: 768px) and (min-height: 900px) and (orientation: landscape) {
   .topRow {
+    padding: 1rem 0;
     padding: var(--spacing-md) 0;
   }
 
   .main {
+    margin-top: 1rem;
     margin-top: var(--spacing-md);
   }
 
@@ -747,15 +876,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.75rem;
   gap: var(--spacing-sm);
   width: 100%;
+  margin-top: 1.5rem;
   margin-top: var(--spacing-lg);
+  padding: 1rem 1.5rem;
   padding: var(--spacing-md) var(--spacing-lg);
   background: linear-gradient(135deg, #FFE5EC 0%, #E0F4FF 50%, #E5FFE0 100%);
+  border: 3px solid #FCFFA6;
   border: 3px solid var(--color-honey);
+  border-radius: 30px;
   border-radius: var(--radius-large);
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   box-shadow: var(--shadow-soft);
 }
 
@@ -773,9 +908,12 @@
 }
 
 .kidsScreenText {
+  font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 1.25rem;
   font-size: var(--font-size-lg);
   font-weight: 700;
+  color: #4A4A4A;
   color: var(--color-dark-text);
 }
 
@@ -783,6 +921,7 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
+  gap: 1.5rem;
   gap: var(--spacing-lg);
   width: 100%;
   overflow: hidden;
@@ -792,6 +931,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1rem;
   gap: var(--spacing-md);
   flex-shrink: 0;
   width: 200px;
@@ -805,10 +945,14 @@
 }
 
 .childModalSubtitle {
+  font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 1.25rem;
   font-size: var(--font-size-lg);
   font-weight: 700;
+  color: #4A4A4A;
   color: var(--color-dark-text);
+  margin-bottom: 1rem;
   margin-bottom: var(--spacing-md);
 }
 
@@ -821,6 +965,7 @@
   .childModalLeft {
     flex-direction: row;
     width: auto;
+    gap: 1.5rem;
     gap: var(--spacing-lg);
   }
 
@@ -833,6 +978,7 @@
 @media (max-width: 1000px) {
   .topRow {
     flex-direction: column;
+    gap: 1rem;
     gap: var(--spacing-md);
     align-items: stretch;
   }
@@ -853,6 +999,7 @@
   }
 
   .kidsScreenButton {
+    margin-top: 1rem;
     margin-top: var(--spacing-md);
   }
 }
@@ -860,17 +1007,20 @@
 /* Mobile */
 @media (max-width: 600px) {
   .page {
+    padding: 1rem;
     padding: var(--spacing-md);
   }
   
   .header {
     flex-direction: column;
+    gap: 1rem;
     gap: var(--spacing-md);
     align-items: flex-start;
   }
 
   .nav {
     align-self: flex-end;
+    margin-top: calc(-1 * 3rem);
     margin-top: calc(-1 * var(--spacing-2xl));
   }
   
@@ -883,10 +1033,12 @@
   }
 
   .title {
+    font-size: 1.5rem;
     font-size: var(--font-size-xl);
   }
 
   .kidsScreenButton {
+    padding: 0.75rem 1rem;
     padding: var(--spacing-sm) var(--spacing-md);
   }
 
@@ -895,6 +1047,7 @@
   }
 
   .kidsScreenText {
+    font-size: 1rem;
     font-size: var(--font-size-md);
   }
 }
@@ -902,7 +1055,9 @@
 /* Floating Kids Screen Button */
 .kidsScreenFab {
   position: fixed;
+  bottom: 0.75rem;
   bottom: var(--spacing-sm);
+  right: 0.75rem;
   right: var(--spacing-sm);
   width: 56px;
   height: 56px;
@@ -910,6 +1065,7 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #FFE5EC 0%, #E0F4FF 50%, #E5FFE0 100%);
+  border: 3px solid #FCFFA6;
   border: 3px solid var(--color-honey);
   border-radius: 50%;
   cursor: pointer;
@@ -933,7 +1089,9 @@
 
 @media (min-width: 768px) {
   .kidsScreenFab {
+    bottom: 1rem;
     bottom: var(--spacing-md);
+    right: 1rem;
     right: var(--spacing-md);
     width: 64px;
     height: 64px;
@@ -946,7 +1104,9 @@
 
 @media (min-width: 1024px) {
   .kidsScreenFab {
+    bottom: 1rem;
     bottom: var(--spacing-md);
+    right: 1rem;
     right: var(--spacing-md);
     width: 70px;
     height: 70px;

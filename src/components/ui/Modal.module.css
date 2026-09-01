@@ -43,6 +43,7 @@
 }
 
 .title {
+  font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
   font-size: 1.25rem;
   font-weight: 800;

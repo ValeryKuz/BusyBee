@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.75rem;
   gap: var(--spacing-sm);
 }
 
@@ -37,9 +38,13 @@
 }
 
 .speechBubble {
+  background: #FFFFFF;
   background: var(--color-white);
+  border-radius: 20px;
   border-radius: var(--radius-medium);
+  padding: 0.75rem 1rem;
   padding: var(--spacing-sm) var(--spacing-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   box-shadow: var(--shadow-soft);
   position: relative;
   max-width: 200px;
@@ -54,12 +59,15 @@
   transform: translateX(-50%);
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
+  border-bottom: 10px solid #FFFFFF;
   border-bottom: 10px solid var(--color-white);
 }
 
 .speechBubble p {
   margin: 0;
+  font-size: 0.875rem;
   font-size: var(--font-size-sm);
   font-weight: 600;
+  color: #4A4A4A;
   color: var(--color-dark-text);
 }

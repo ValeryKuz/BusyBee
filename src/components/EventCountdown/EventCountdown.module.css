@@ -1,10 +1,15 @@
 .card {
   display: flex;
   align-items: center;
+  gap: 1rem;
   gap: var(--spacing-md);
+  padding: 1rem;
   padding: var(--spacing-md);
+  background: #FFFFFF;
   background: var(--color-white);
+  border-radius: 20px;
   border-radius: var(--radius-medium);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   box-shadow: var(--shadow-soft);
   transition: all 0.3s ease;
   position: relative;
@@ -13,6 +18,7 @@
 
 .card:hover {
   transform: translateY(-2px);
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.1);
   box-shadow: var(--shadow-medium);
 }
 
@@ -37,6 +43,7 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #B5DEFF 0%, #DAF0FF 100%);
+  border-radius: 20px;
   border-radius: var(--radius-medium);
 }
 
@@ -57,14 +64,21 @@
 .titleRow {
   display: flex;
   align-items: baseline;
+  gap: 0.75rem;
   gap: var(--spacing-sm);
+  margin-bottom: 0.5rem;
   margin-bottom: var(--spacing-xs);
 }
 
 .title {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 1rem;
   font-size: var(--font-size-md);
   font-weight: 700;
+  color: #4A4A4A;
   color: var(--color-dark-text);
   margin: 0;
   white-space: nowrap;
@@ -73,14 +87,20 @@
 }
 
 .date {
+  flex-shrink: 0;
+  font-size: 0.75rem;
   font-size: var(--font-size-xs);
+  color: #7A7A7A;
   color: var(--color-light-text);
   white-space: nowrap;
 }
 
 .note {
+  font-size: 0.75rem;
   font-size: var(--font-size-xs);
+  color: #7A7A7A;
   color: var(--color-light-text);
+  margin: 0 0 0.5rem 0;
   margin: 0 0 var(--spacing-xs) 0;
   line-height: 1.3;
 }
@@ -88,6 +108,7 @@
 .countdown {
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
   gap: var(--spacing-xs);
 }
 
@@ -105,29 +126,36 @@
 }
 
 .moreMoons {
+  font-size: 0.875rem;
   font-size: var(--font-size-sm);
   font-weight: 700;
   color: #A890E8;
   background: #E4DBFF;
   padding: 2px 8px;
+  border-radius: 12px;
   border-radius: var(--radius-small);
 }
 
 .todayText {
+  font-size: 1.25rem;
   font-size: var(--font-size-lg);
   font-weight: 800;
+  color: #4A4A4A;
   color: var(--color-dark-text);
   animation: celebrate 0.5s ease-in-out infinite alternate;
 }
 
 .sleepsText {
+  font-size: 0.875rem;
   font-size: var(--font-size-sm);
+  color: #7A7A7A;
   color: var(--color-light-text);
   font-weight: 600;
 }
 
 .card.imminent .sleepsText,
 .card.soon .sleepsText {
+  color: #4A4A4A;
   color: var(--color-dark-text);
 }
 
@@ -155,6 +183,7 @@
 /* Tablet */
 @media (min-width: 768px) {
   .card {
+    padding: 1.5rem;
     padding: var(--spacing-lg);
   }
 
@@ -168,6 +197,7 @@
   }
 
   .title {
+    font-size: 1.25rem;
     font-size: var(--font-size-lg);
   }
 

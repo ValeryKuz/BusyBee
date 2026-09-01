@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHive } from '../../hooks/useHive';
 import { BeeMascot } from '../../components/BeeMascot';
+import { getLocalDate } from '../../utils/dateUtils';
 import {
   KIDS_ACTIVITY_MODES,
   KIDS_ACTIVITIES_MORNING,
@@ -23,20 +24,35 @@ const getActivitiesForMode = (mode) => {
 
 export const Kids = () => {
   const navigate = useNavigate();
-  const { children, addEntry, loading } = useHive();
+  const { children, entries, addEntry, loading } = useHive();
   const [selectedChild, setSelectedChild] = useState(null);
   const [selectedMode, setSelectedMode] = useState(null);
   const [feedback, setFeedback] = useState(null);
+  const [pendingActivity, setPendingActivity] = useState(null);
+
+  const completedActivities = useMemo(() => {
+    if (!selectedChild || !selectedMode || selectedMode === 'food') return new Set();
+    const today = getLocalDate();
+    return new Set(
+      entries
+        .filter((e) => e.childId === selectedChild.id && e.date === today && e.note === selectedMode)
+        .map((e) => e.icon)
+    );
+  }, [entries, selectedChild, selectedMode]);
 
   const handleActivityTap = async (activity) => {
-    if (!selectedChild) return;
-    
-    const isFood = selectedMode === 'food';
-    const type = isFood ? ENTRY_TYPES.FOOD : ENTRY_TYPES.GOOD;
-    await addEntry(selectedChild.id, type, activity.emoji, null, '', isFood ? 0 : undefined);
-    setFeedback(activity);
-    
-    setTimeout(() => setFeedback(null), 2000);
+    if (!selectedChild || pendingActivity || completedActivities.has(activity.emoji)) return;
+
+    setPendingActivity(activity.emoji);
+    try {
+      const isFood = selectedMode === 'food';
+      const type = isFood ? ENTRY_TYPES.FOOD : ENTRY_TYPES.GOOD;
+      await addEntry(selectedChild.id, type, activity.emoji, null, selectedMode, isFood ? 0 : undefined);
+      setFeedback(activity);
+      setTimeout(() => setFeedback(null), 2000);
+    } finally {
+      setPendingActivity(null);
+    }
   };
 
   const handleBack = () => {
@@ -146,16 +162,22 @@ export const Kids = () => {
         </div>
 
         <div className={styles.activitiesGrid}>
-          {activities.map((activity) => (
-            <button
-              key={activity.emoji}
-              className={styles.activityButton}
-              onClick={() => handleActivityTap(activity)}
-            >
-              <span className={styles.activityIcon}>{activity.emoji}</span>
-              <span className={styles.activityLabel}>{activity.label}</span>
-            </button>
-          ))}
+          {activities.map((activity) => {
+            const isCompleted = completedActivities.has(activity.emoji);
+            const isPending = pendingActivity === activity.emoji;
+            return (
+              <button
+                key={activity.emoji}
+                className={`${styles.activityButton} ${isCompleted ? styles.activityButtonDone : ''}`}
+                onClick={() => handleActivityTap(activity)}
+                disabled={isCompleted || isPending}
+              >
+                <span className={styles.activityIcon}>{activity.emoji}</span>
+                <span className={styles.activityLabel}>{activity.label}</span>
+                {isCompleted && <span className={styles.activityCheck}>✓</span>}
+              </button>
+            );
+          })}
         </div>
 
         {feedback && (
