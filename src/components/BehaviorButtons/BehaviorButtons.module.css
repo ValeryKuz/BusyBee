@@ -58,7 +58,11 @@
 
 .iconsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* auto-fit sizes columns to the space this component actually has,
+     rather than assuming full viewport width — it's nested beside a
+     fixed-width honey jar panel in some layouts (e.g. the dashboard's
+     child activity modal), where a fixed column count can overflow. */
+  grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
   gap: var(--spacing-sm);
 }
 
@@ -196,7 +200,7 @@
 /* Tablet */
 @media (min-width: 768px) {
   .iconsGrid {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
     gap: var(--spacing-md);
   }
 
