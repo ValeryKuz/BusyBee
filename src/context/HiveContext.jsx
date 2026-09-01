@@ -12,6 +12,8 @@ import {
   DAILY_COLORS,
   DAILY_CHALLENGES,
   MAGIC_WORDS,
+  KID_COLORS,
+  getNextKidColor,
 } from '../utils/constants';
 
 export const HiveContext = createContext(null);
@@ -131,13 +133,14 @@ export const HiveProvider = ({ children: childrenProp }) => {
 
   const addChild = useCallback(async (name, avatar, birthday = null) => {
     try {
-      const newChild = await db.addChild(name, avatar, birthday);
+      const color = getNextKidColor(children.map((c) => c.color));
+      const newChild = await db.addChild(name, avatar, birthday, color);
       setChildren((prev) => [...prev, newChild]);
     } catch (err) {
       console.error('Failed to add child:', err);
       setError(err.message);
     }
-  }, []);
+  }, [children]);
 
   const updateChild = useCallback(async (id, updates) => {
     try {
@@ -232,6 +235,18 @@ export const HiveProvider = ({ children: childrenProp }) => {
       setError(err.message);
     }
   }, []);
+
+  // Falls back to a stable palette color for kids added before the color
+  // feature existed (color is null until they're given one explicitly).
+  const getChildColor = useCallback(
+    (childId) => {
+      const index = children.findIndex((c) => c.id === childId);
+      const child = children[index];
+      if (child?.color) return child.color;
+      return KID_COLORS[index >= 0 ? index % KID_COLORS.length : 0];
+    },
+    [children]
+  );
 
   const getChildEntries = useCallback(
     (childId) => entries.filter((e) => e.childId === childId),
@@ -468,6 +483,7 @@ export const HiveProvider = ({ children: childrenProp }) => {
     addEvent,
     updateEvent,
     deleteEvent,
+    getChildColor,
     getChildEntries,
     getEntriesForDate,
     getChildTodayHoney,

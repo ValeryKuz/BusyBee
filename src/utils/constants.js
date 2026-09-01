@@ -136,6 +136,27 @@ export const ANIMAL_AVATARS = [
   { emoji: '🐱', name: 'Kitty' },
 ];
 
+// Palette assigned to kids so their entries/events can be told apart on the
+// calendar at a glance. addChild() picks the first color here not already
+// used by an existing kid; a kid's color can be overridden in Settings.
+export const KID_COLORS = [
+  '#FF6B9D',
+  '#6EC6FF',
+  '#7ED957',
+  '#FFB74D',
+  '#B19CD9',
+  '#4ECDC4',
+  '#FF8A65',
+  '#82C4FF',
+  '#C9A0FF',
+  '#66D9A6',
+];
+
+export const getNextKidColor = (existingColors = []) => {
+  const used = new Set(existingColors.filter(Boolean));
+  return KID_COLORS.find((color) => !used.has(color)) || KID_COLORS[existingColors.length % KID_COLORS.length];
+};
+
 export const HONEY_VALUES = {
   GOOD_DEFAULT: 5,
   BAD_DEFAULT: -2,

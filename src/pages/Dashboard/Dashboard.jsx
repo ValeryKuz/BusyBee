@@ -8,7 +8,7 @@ import { BehaviorButtons } from '../../components/BehaviorButtons';
 import { EventCountdown } from '../../components/EventCountdown';
 import { DailyFunLottie } from '../../components/DailyFunLottie';
 import { Button, Modal } from '../../components/ui';
-import { ANIMAL_AVATARS, DAILY_FUN_CATEGORIES } from '../../utils/constants';
+import { ANIMAL_AVATARS, DAILY_FUN_CATEGORIES, KID_COLORS } from '../../utils/constants';
 import styles from './Dashboard.module.css';
 
 export const Dashboard = () => {
@@ -18,10 +18,12 @@ export const Dashboard = () => {
     signOut,
     children,
     addChild,
+    updateChild,
     deleteChild,
     getUpcomingEvents,
     getChildTodayHoney,
     getChildTotalHoney,
+    getChildColor,
     settings,
     setDailyFunCategory,
     getDailyFunContent,
@@ -34,6 +36,7 @@ export const Dashboard = () => {
   const [newChildName, setNewChildName] = useState('');
   const [newChildAvatar, setNewChildAvatar] = useState(ANIMAL_AVATARS[0].emoji);
   const [newChildBirthday, setNewChildBirthday] = useState('');
+  const [colorPickerChildId, setColorPickerChildId] = useState(null);
 
   const selectedChild = children.find((c) => c.id === selectedChildId) || null;
   const upcomingEvents = getUpcomingEvents().slice(0, 3);
@@ -300,6 +303,31 @@ export const Dashboard = () => {
                     <span className={styles.kidsListAvatar}>{child.avatar}</span>
                     <span className={styles.kidsListName}>{child.name}</span>
                     {child.birthday && <span className={styles.kidsListBirthday}>🎂 {formatBirthday(child.birthday)}</span>}
+                    <div className={styles.kidsListColorWrap}>
+                      <button
+                        type="button"
+                        className={styles.kidsListColorSwatch}
+                        style={{ background: getChildColor(child.id) }}
+                        title="Calendar color"
+                        onClick={() => setColorPickerChildId(colorPickerChildId === child.id ? null : child.id)}
+                      />
+                      {colorPickerChildId === child.id && (
+                        <div className={styles.kidsListColorPicker}>
+                          {KID_COLORS.map((color) => (
+                            <button
+                              key={color}
+                              type="button"
+                              className={styles.kidsListColorOption}
+                              style={{ background: color }}
+                              onClick={() => {
+                                updateChild(child.id, { color });
+                                setColorPickerChildId(null);
+                              }}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
                     <button
                       className={styles.kidsListDelete}
                       onClick={() => {

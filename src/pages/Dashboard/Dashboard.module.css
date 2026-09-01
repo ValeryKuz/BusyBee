@@ -524,6 +524,52 @@
   margin-left: auto;
 }
 
+.kidsListColorWrap {
+  position: relative;
+}
+
+.kidsListColorSwatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--color-white);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.kidsListColorSwatch:hover {
+  transform: scale(1.15);
+}
+
+.kidsListColorPicker {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding: var(--spacing-sm);
+  background: var(--color-white);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--shadow-medium);
+  z-index: 10;
+}
+
+.kidsListColorOption {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.kidsListColorOption:hover {
+  transform: scale(1.15);
+  border-color: var(--color-dark-text);
+}
+
 .kidsListDelete {
   width: 28px;
   height: 28px;

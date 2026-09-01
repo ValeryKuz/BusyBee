@@ -46,6 +46,7 @@ export const Calendar = () => {
     addFamilyActivity, 
     deleteEntry, 
     addEvent,
+    updateEvent,
     deleteEvent,
     getRelatedEvents,
     updateEventRange,
@@ -56,7 +57,8 @@ export const Calendar = () => {
     setShowHolidays,
     loadHolidaysForYear,
     getHolidaysForDate,
-    loading 
+    getChildColor,
+    loading
   } = useHive();
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [viewMode, setViewMode] = useState('month');
@@ -73,6 +75,7 @@ export const Calendar = () => {
   const [eventParticipants, setEventParticipants] = useState([]);
   const [editingEvent, setEditingEvent] = useState(null);
   const [editEventDate, setEditEventDate] = useState('');
+  const [editEventParticipants, setEditEventParticipants] = useState([]);
   const [saving, setSaving] = useState(false);
   const [legoSetId, setLegoSetId] = useState('');
   const [legoStatus, setLegoStatus] = useState('idle');
@@ -253,16 +256,24 @@ export const Calendar = () => {
   };
 
   const toggleEventParticipant = (participant) => {
-    setEventParticipants((prev) => 
-      prev.includes(participant) 
+    setEventParticipants((prev) =>
+      prev.includes(participant)
         ? prev.filter((p) => p !== participant)
         : [...prev, participant]
     );
   };
 
-  const getParticipantsDisplay = () => {
-    if (eventParticipants.length === 0) return '';
-    return eventParticipants.map((p) => {
+  const toggleEditEventParticipant = (participant) => {
+    setEditEventParticipants((prev) =>
+      prev.includes(participant)
+        ? prev.filter((p) => p !== participant)
+        : [...prev, participant]
+    );
+  };
+
+  const participantsToDisplay = (participantIds) => {
+    if (participantIds.length === 0) return '';
+    return participantIds.map((p) => {
       if (p === 'mom') return '👩';
       if (p === 'dad') return '👨';
       if (p === 'family') return '👨‍👩‍👧‍👦';
@@ -270,6 +281,8 @@ export const Calendar = () => {
       return child?.avatar || '';
     }).join(' ');
   };
+
+  const getParticipantsDisplay = () => participantsToDisplay(eventParticipants);
 
   const extractParticipantsFromNote = (note) => {
     if (!note) return { participants: '', cleanNote: '' };
@@ -280,6 +293,46 @@ export const Calendar = () => {
     return { participants: '', cleanNote: note };
   };
 
+  // Reverses participantsToDisplay's emoji encoding so an existing event's
+  // saved participants can pre-populate the edit picker's selection state.
+  const extractParticipantIdsFromNote = (note) => {
+    const { participants } = extractParticipantsFromNote(note);
+    if (!participants) return [];
+    return participants.split(/\s+/).filter(Boolean).map((token) => {
+      if (token === '👩') return 'mom';
+      if (token === '👨') return 'dad';
+      if (token === '👨‍👩‍👧‍👦') return 'family';
+      const child = children.find((c) => c.avatar === token);
+      return child ? child.id : null;
+    }).filter(Boolean);
+  };
+
+  // Events don't store a childId directly - participants are baked into the
+  // note as the emoji picked in the "Who?" step, so kids are matched back by
+  // their avatar to color the event on the calendar.
+  const getEventKidColors = (note) => {
+    const { participants } = extractParticipantsFromNote(note);
+    if (!participants) return [];
+    const tokens = participants.split(/\s+/).filter(Boolean);
+    const seen = new Set();
+    const colors = [];
+    tokens.forEach((token) => {
+      const child = children.find((c) => c.avatar === token);
+      if (child && !seen.has(child.id)) {
+        seen.add(child.id);
+        colors.push(getChildColor(child.id));
+      }
+    });
+    return colors;
+  };
+
+  const getKidStripeBackground = (colors) => {
+    if (colors.length === 0) return null;
+    if (colors.length === 1) return colors[0];
+    const step = 100 / colors.length;
+    const stops = colors.map((c, i) => `${c} ${i * step}%, ${c} ${(i + 1) * step}%`).join(', ');
+    return `linear-gradient(to bottom, ${stops})`;
+  };
 
   const getIconsForTab = () => {
     if (entryTab === 'good') return BEHAVIOR_ICONS.good;
@@ -294,6 +347,7 @@ export const Calendar = () => {
   const openEventFromBar = (run) => {
     setEditingEvent(run.representative);
     setEditEventDate(run.representative.date);
+    setEditEventParticipants(extractParticipantIdsFromNote(run.representative.note));
   };
 
   // Computes which event runs are visible in this week, clipped to the
@@ -488,6 +542,7 @@ export const Calendar = () => {
             <div className={styles.eventBarsLayer}>
               {visibleBars.map((run) => {
                 const { participants } = extractParticipantsFromNote(run.note);
+                const stripeBg = getKidStripeBackground(getEventKidColors(run.note));
                 return (
                   <button
                     key={`${run.id}-${weekDays[0].toString()}`}
@@ -502,6 +557,7 @@ export const Calendar = () => {
                       ? `${run.title} (${format(new Date(run.startDate + 'T00:00:00'), 'MMM d')} - ${format(new Date(run.endDate + 'T00:00:00'), 'MMM d')})`
                       : run.title}
                   >
+                    {stripeBg && <span className={styles.eventKidStripe} style={{ background: stripeBg }} />}
                     <span className={styles.eventBarIcon}>{run.icon}</span>
                     {participants && <span className={styles.eventBarParticipants}>{participants}</span>}
                     <span className={styles.eventBarTitle}>{run.title}</span>
@@ -570,8 +626,14 @@ export const Calendar = () => {
               <div className={styles.detailsList}>
                 {dayEvents.map((event) => {
                   const { participants, cleanNote } = extractParticipantsFromNote(event.note);
+                  const stripeBg = getKidStripeBackground(getEventKidColors(event.note));
                   return (
-                  <div key={event.id} className={`${styles.activityItem} ${(participants || cleanNote) ? styles.hasNote : ''}`}>
+                  <div
+                    key={event.id}
+                    className={`${styles.activityItem} ${(participants || cleanNote) ? styles.hasNote : ''}`}
+                    style={stripeBg ? { paddingLeft: 14 } : undefined}
+                  >
+                    {stripeBg && <span className={styles.eventKidStripe} style={{ background: stripeBg }} />}
                     <div className={styles.activityMain}>
                       <span>{event.icon}</span>
                       {participants && <span className={styles.eventParticipantsModal}>{participants}</span>}
@@ -583,6 +645,7 @@ export const Calendar = () => {
                         onClick={() => {
                           setEditingEvent(event);
                           setEditEventDate(event.date);
+                          setEditEventParticipants(extractParticipantIdsFromNote(event.note));
                         }}
                         className={styles.editEventBtn}
                       >
@@ -915,6 +978,7 @@ export const Calendar = () => {
                             key={child.id}
                             type="button"
                             className={`${styles.participantBtn} ${eventParticipants.includes(child.id) ? styles.participantSelected : ''}`}
+                            style={{ borderColor: eventParticipants.includes(child.id) ? undefined : getChildColor(child.id) }}
                             onClick={() => toggleEventParticipant(child.id)}
                           >
                             {child.avatar}
@@ -986,6 +1050,7 @@ export const Calendar = () => {
                             key={child.id}
                             type="button"
                             className={`${styles.participantBtn} ${eventParticipants.includes(child.id) ? styles.participantSelected : ''}`}
+                            style={{ borderColor: eventParticipants.includes(child.id) ? undefined : getChildColor(child.id) }}
                             onClick={() => toggleEventParticipant(child.id)}
                           >
                             {child.avatar}
@@ -1195,30 +1260,31 @@ export const Calendar = () => {
         </div>
       </Modal>
 
-      <Modal 
-        isOpen={!!editingEvent} 
-        onClose={() => setEditingEvent(null)} 
-        title="Edit Event Date"
+      <Modal
+        isOpen={!!editingEvent}
+        onClose={() => { setEditingEvent(null); setEditEventParticipants([]); }}
+        title="Edit Event"
       >
         {editingEvent && (() => {
           const relatedEvents = getRelatedEvents(editingEvent);
           const isMultiDay = relatedEvents.length > 1;
           const startDate = relatedEvents[0]?.date;
           const endDate = relatedEvents[relatedEvents.length - 1]?.date;
-          
+          const { cleanNote } = extractParticipantsFromNote(editingEvent.note);
+
           return (
             <div className={styles.addActivityForm}>
               <div className={styles.selectedChildren}>
                 <span className={styles.selectedIconBadge}>{editingEvent.icon}</span>
                 <span>{editingEvent.title}</span>
               </div>
-              
+
               {isMultiDay && (
                 <p className={styles.eventRangeInfo}>
                   Current: {format(new Date(startDate), 'MMM d')} - {format(new Date(endDate), 'MMM d, yyyy')} ({relatedEvents.length} days)
                 </p>
               )}
-              
+
               <div className={styles.noteSection}>
                 <label className={styles.noteLabel}>{isMultiDay ? 'New start date' : 'New date'}</label>
                 <input
@@ -1236,28 +1302,82 @@ export const Calendar = () => {
                 </p>
               )}
 
-              <Button 
-                variant="primary" 
-                size="large" 
-                fullWidth 
+              <div className={styles.noteSection}>
+                <label className={styles.noteLabel}>Who? (colors this event on the calendar)</label>
+                <div className={styles.participantsPicker}>
+                  <button
+                    type="button"
+                    className={`${styles.participantBtn} ${editEventParticipants.includes('family') ? styles.participantSelected : ''}`}
+                    onClick={() => toggleEditEventParticipant('family')}
+                  >
+                    👨‍👩‍👧‍👦
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.participantBtn} ${editEventParticipants.includes('mom') ? styles.participantSelected : ''}`}
+                    onClick={() => toggleEditEventParticipant('mom')}
+                  >
+                    👩
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.participantBtn} ${editEventParticipants.includes('dad') ? styles.participantSelected : ''}`}
+                    onClick={() => toggleEditEventParticipant('dad')}
+                  >
+                    👨
+                  </button>
+                  {children.map((child) => (
+                    <button
+                      key={child.id}
+                      type="button"
+                      className={`${styles.participantBtn} ${editEventParticipants.includes(child.id) ? styles.participantSelected : ''}`}
+                      style={{ borderColor: editEventParticipants.includes(child.id) ? undefined : getChildColor(child.id) }}
+                      onClick={() => toggleEditEventParticipant(child.id)}
+                    >
+                      {child.avatar}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <Button
+                variant="primary"
+                size="large"
+                fullWidth
                 disabled={saving}
                 onClick={async () => {
                   const currentStart = relatedEvents[0]?.date;
-                  if (editEventDate && editEventDate !== currentStart) {
+                  const dateChanged = !!editEventDate && editEventDate !== currentStart;
+                  const newParticipantsPrefix = participantsToDisplay(editEventParticipants);
+                  const newNote = newParticipantsPrefix
+                    ? `${newParticipantsPrefix}${cleanNote ? ' | ' + cleanNote : ''}`
+                    : cleanNote;
+                  const noteChanged = newNote !== (editingEvent.note || '');
+
+                  if (dateChanged || noteChanged) {
                     setSaving(true);
                     try {
-                      await updateEventRange(editingEvent, editEventDate);
-                      setSelectedDate(new Date(editEventDate));
+                      if (dateChanged) {
+                        await updateEventRange(editingEvent, editEventDate);
+                      }
+                      if (noteChanged) {
+                        for (const relatedEvent of relatedEvents) {
+                          await updateEvent(relatedEvent.id, { note: newNote });
+                        }
+                      }
+                      if (dateChanged) setSelectedDate(new Date(editEventDate));
                       setEditingEvent(null);
+                      setEditEventParticipants([]);
                     } finally {
                       setSaving(false);
                     }
                   } else {
                     setEditingEvent(null);
+                    setEditEventParticipants([]);
                   }
                 }}
               >
-                {saving ? 'Saving...' : (isMultiDay ? `Move ${relatedEvents.length} Days` : 'Update Date')}
+                {saving ? 'Saving...' : (isMultiDay ? `Save (${relatedEvents.length} Days)` : 'Save')}
               </Button>
 
               <Button 

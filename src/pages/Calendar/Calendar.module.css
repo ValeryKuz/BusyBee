@@ -391,12 +391,13 @@
 }
 
 .eventBar {
+  position: relative;
   pointer-events: auto;
   display: flex;
   align-items: center;
   gap: 3px;
   min-width: 0;
-  padding: 0 5px;
+  padding: 0 5px 0 9px;
   border: none;
   border-radius: 5px;
   background: linear-gradient(135deg, #FCFFA6, #C1FFD7);
@@ -407,6 +408,17 @@
   color: var(--color-dark-text);
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Colored stripe matching the kid(s) tied to this event, so events can be
+   told apart by kid on the calendar even when the icon/title look similar. */
+.eventKidStripe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 5px 0 0 5px;
 }
 
 .eventBar:hover {

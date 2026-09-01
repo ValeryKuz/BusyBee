@@ -17,14 +17,14 @@ export const fetchChildren = async () => {
   return data || [];
 };
 
-export const addChild = async (name, avatar, birthday = null) => {
+export const addChild = async (name, avatar, birthday = null, color = null) => {
   const familyId = await getFamilyId();
   const { data, error } = await supabase
     .from('children')
-    .insert([{ name, avatar, birthday, family_id: familyId }])
+    .insert([{ name, avatar, birthday, color, family_id: familyId }])
     .select()
     .single();
-  
+
   if (error) throw error;
   return data;
 };
@@ -34,6 +34,7 @@ export const updateChild = async (id, updates) => {
   if (updates.name !== undefined) dbUpdates.name = updates.name;
   if (updates.avatar !== undefined) dbUpdates.avatar = updates.avatar;
   if (updates.birthday !== undefined) dbUpdates.birthday = updates.birthday;
+  if (updates.color !== undefined) dbUpdates.color = updates.color;
 
   const { data, error } = await supabase
     .from('children')
