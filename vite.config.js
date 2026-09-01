@@ -23,11 +23,32 @@ export default defineConfig({
     // browsers below that baseline are routed to the legacy chunk instead
     // via runtime feature detection, not a version check.)
     legacy({
-      targets: ['chrome >= 49', 'safari >= 10', 'firefox >= 54', 'edge >= 15'],
+      targets: ['chrome >= 49', 'safari >= 9', 'firefox >= 54', 'edge >= 15'],
       modernPolyfills: true,
+      // fetch/AbortController are DOM/WHATWG APIs, not ECMAScript, so
+      // core-js (what `polyfills` covers) doesn't provide them — Safari 9
+      // (e.g. iOS 9.3.5) has neither, and the Supabase client calls fetch
+      // directly with no fallback. whatwg-fetch must load before the
+      // AbortController patch, since the patch wraps whatever fetch exists.
+      additionalLegacyPolyfills: [
+        'whatwg-fetch',
+        'abortcontroller-polyfill/dist/polyfill-patch-fetch',
+      ],
     }),
   ],
   base: '/BusyBee/',
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      // Terser's default compress pass rewrites plain/method functions
+      // back into arrow syntax as a size optimization — that silently
+      // undoes Babel's arrow-function downleveling on the legacy chunk,
+      // which is exactly the syntax Safari 9 etc. can't parse.
+      compress: {
+        arrows: false,
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
