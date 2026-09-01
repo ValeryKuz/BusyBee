@@ -103,15 +103,19 @@
   }
 
   .avatarWrapper {
+    width: 70px;
     width: clamp(40px, 8vh, 70px);
+    height: 70px;
     height: clamp(40px, 8vh, 70px);
   }
 
   .avatar {
+    font-size: 2.5rem;
     font-size: clamp(1.4rem, 5vh, 2.5rem);
   }
 
   .name {
+    font-size: 1.5rem;
     font-size: clamp(1rem, 2.5vh, 1.5rem);
   }
 
@@ -121,10 +125,12 @@
   }
 
   .honeyIcon {
+    font-size: 1rem;
     font-size: clamp(0.7rem, 1.8vh, 1rem);
   }
 
   .honeyCount {
+    font-size: 0.875rem;
     font-size: clamp(0.65rem, 1.6vh, 0.875rem);
   }
 }
@@ -138,15 +144,19 @@
   }
 
   .avatarWrapper {
+    width: 80px;
     width: clamp(50px, 10vh, 80px);
+    height: 80px;
     height: clamp(50px, 10vh, 80px);
   }
 
   .avatar {
+    font-size: 3rem;
     font-size: clamp(1.8rem, 6vh, 3rem);
   }
 
   .name {
+    font-size: 1.125rem;
     font-size: clamp(0.875rem, 2vh, 1.125rem);
   }
 }

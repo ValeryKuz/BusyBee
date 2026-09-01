@@ -232,13 +232,16 @@
 }
 
 .dailyFunEmoji {
+  font-size: 4rem;
   font-size: clamp(2rem, 10vmin, 4rem);
   animation: wiggle 2s ease-in-out infinite;
   line-height: 1;
 }
 
 .dailyFunLottie {
+  width: 120px;
   width: clamp(60px, 15vmin, 120px);
+  height: 120px;
   height: clamp(60px, 15vmin, 120px);
 }
 
@@ -299,6 +302,7 @@
 }
 
 .dailyFunColorThings {
+  font-size: 2rem;
   font-size: clamp(1.2rem, 4vh, 2rem);
   letter-spacing: 0.3rem;
 }
@@ -752,11 +756,14 @@
   }
 
   .dailyFunEmoji {
+    font-size: 3rem;
     font-size: clamp(1.5rem, 8vh, 3rem);
   }
 
   .dailyFunLottie {
+    width: 100px;
     width: clamp(50px, 12vh, 100px);
+    height: 100px;
     height: clamp(50px, 12vh, 100px);
   }
 
@@ -783,6 +790,7 @@
   }
 
   .title {
+    font-size: 1.8rem;
     font-size: clamp(1.2rem, 3vh, 1.8rem);
   }
 
@@ -822,6 +830,7 @@
   }
 
   .emptyIcon {
+    font-size: 4rem;
     font-size: clamp(2rem, 8vh, 4rem);
   }
 }
@@ -863,11 +872,14 @@
   }
 
   .dailyFunEmoji {
+    font-size: 4rem;
     font-size: clamp(2rem, 10vh, 4rem);
   }
 
   .dailyFunLottie {
+    width: 120px;
     width: clamp(60px, 15vh, 120px);
+    height: 120px;
     height: clamp(60px, 15vh, 120px);
   }
 }

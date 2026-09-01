@@ -59,6 +59,7 @@
 .title {
   font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 2.5rem;
   font-size: clamp(1.5rem, 6vw, 2.5rem);
   color: #4A4A4A;
   color: var(--color-dark-text);
@@ -307,6 +308,7 @@
 .greeting {
   font-family: 'Ciscopic', 'Nunito', system-ui, sans-serif;
   font-family: var(--font-heading);
+  font-size: 2rem;
   font-size: clamp(1.5rem, 5vw, 2rem);
   color: #4A4A4A;
   color: var(--color-dark-text);
@@ -491,11 +493,17 @@
 
   .modeHeader {
     flex-direction: row;
-    gap: 1rem;
-    gap: var(--spacing-md);
     margin-bottom: 1.5rem;
     margin-bottom: var(--spacing-lg);
     margin-top: 0;
+  }
+
+  /* margin instead of flex gap - gap on flex containers isn't supported
+     until Safari 14.1, and silently collapses to 0 on older iPads. */
+  .modeHeader .greeting,
+  .modeHeader .subtitle {
+    margin-left: 1rem;
+    margin-left: var(--spacing-md);
   }
 
   .modeGrid {
@@ -509,14 +517,17 @@
   }
 
   .modeIcon {
+    font-size: 5rem;
     font-size: clamp(3rem, 10vh, 5rem);
   }
 
   .modeLabel {
+    font-size: 1.5rem;
     font-size: clamp(1rem, 3vh, 1.5rem);
   }
 
   .title {
+    font-size: 2.5rem;
     font-size: clamp(1.5rem, 4vh, 2.5rem);
   }
 
@@ -529,14 +540,17 @@
     padding: 1rem;
     padding: var(--spacing-md);
     min-width: auto;
+    width: 150px;
     width: clamp(100px, 15vh, 150px);
   }
 
   .avatar {
+    font-size: 4rem;
     font-size: clamp(2.5rem, 8vh, 4rem);
   }
 
   .name {
+    font-size: 1.125rem;
     font-size: clamp(0.875rem, 2vh, 1.125rem);
   }
 
@@ -559,24 +573,33 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    gap: var(--spacing-md);
     margin: 0;
     padding: 0.75rem 0;
     padding: var(--spacing-sm) 0;
     width: 100%;
   }
 
+  /* margin instead of flex gap - gap on flex containers isn't supported
+     until Safari 14.1, and silently collapses to 0 on older iPads. */
+  .header .greeting,
+  .header .subtitle {
+    margin-left: 1rem;
+    margin-left: var(--spacing-md);
+  }
+
   .selectedAvatar {
+    font-size: 3.5rem;
     font-size: clamp(2rem, 6vh, 3.5rem);
     animation: none;
   }
 
   .greeting {
+    font-size: 2rem;
     font-size: clamp(1.2rem, 3vh, 2rem);
   }
 
   .subtitle {
+    font-size: 1.125rem;
     font-size: clamp(0.875rem, 2vh, 1.125rem);
     margin-left: 0;
   }
@@ -595,10 +618,12 @@
   }
 
   .activityIcon {
+    font-size: 3rem;
     font-size: clamp(1.8rem, 6vh, 3rem);
   }
 
   .activityLabel {
+    font-size: 1rem;
     font-size: clamp(0.7rem, 1.8vh, 1rem);
   }
 
@@ -608,10 +633,12 @@
   }
 
   .feedbackIcon {
+    font-size: 5rem;
     font-size: clamp(3rem, 12vh, 5rem);
   }
 
   .feedbackText {
+    font-size: 1.5rem;
     font-size: clamp(1rem, 3vh, 1.5rem);
   }
 }
@@ -630,6 +657,7 @@
   }
 
   .avatarButton {
+    width: 180px;
     width: clamp(120px, 18vh, 180px);
   }
 }
@@ -637,14 +665,17 @@
 /* Taller landscape screens (900px+ height) */
 @media (min-width: 768px) and (min-height: 900px) and (orientation: landscape) {
   .activityIcon {
+    font-size: 4rem;
     font-size: clamp(2.5rem, 8vh, 4rem);
   }
 
   .activityLabel {
+    font-size: 1.125rem;
     font-size: clamp(0.875rem, 2vh, 1.125rem);
   }
 
   .selectedAvatar {
+    font-size: 4rem;
     font-size: clamp(2.5rem, 8vh, 4rem);
   }
 }
@@ -759,14 +790,17 @@
   }
 
   .modeIcon {
+    font-size: 5rem;
     font-size: clamp(3.5rem, 9vw, 5rem);
   }
 
   .modeLabel {
+    font-size: 1.5rem;
     font-size: clamp(1.1rem, 3vw, 1.5rem);
   }
 
   .title {
+    font-size: 2.8rem;
     font-size: clamp(2rem, 6vw, 2.8rem);
   }
 
@@ -782,10 +816,12 @@
   }
 
   .avatar {
+    font-size: 5.5rem;
     font-size: clamp(3.5rem, 9vw, 5.5rem);
   }
 
   .name {
+    font-size: 1.4rem;
     font-size: clamp(1.1rem, 3vw, 1.4rem);
   }
 
@@ -804,22 +840,27 @@
   }
 
   .activityIcon {
+    font-size: 3.5rem;
     font-size: clamp(2.5rem, 6vw, 3.5rem);
   }
 
   .activityLabel {
+    font-size: 1.15rem;
     font-size: clamp(0.9rem, 2vw, 1.15rem);
   }
 
   .selectedAvatar {
+    font-size: 4rem;
     font-size: clamp(3rem, 7vw, 4rem);
   }
 
   .greeting {
+    font-size: 2.2rem;
     font-size: clamp(1.5rem, 4vw, 2.2rem);
   }
 
   .subtitle {
+    font-size: 1.25rem;
     font-size: clamp(1rem, 2.5vw, 1.25rem);
   }
 }

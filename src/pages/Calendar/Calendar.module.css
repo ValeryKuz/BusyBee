@@ -106,6 +106,7 @@
   display: flex;
   gap: 2px;
   background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border-radius: 20px;
   border-radius: var(--radius-medium);
@@ -146,6 +147,7 @@
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border: 2px solid transparent;
   border-radius: 50%;
@@ -168,6 +170,7 @@
   border-color: #CAB8FF;
   border-color: var(--color-lavender);
   background: linear-gradient(135deg, rgba(252, 255, 166, 0.6), rgba(193, 255, 215, 0.6));
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
 
@@ -348,6 +351,7 @@
   align-items: center;
   gap: 4px;
   background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   padding: 2px 6px;
   border-radius: 8px;
@@ -640,6 +644,7 @@
   gap: var(--spacing-xs);
   padding: 6px 10px;
   background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(202, 184, 255, 0.4);
   border-radius: 20px;
@@ -873,6 +878,7 @@
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   border: 2px solid transparent;
   border-radius: 20px;
@@ -1353,4 +1359,3 @@
     font-size: 0.6rem;
   }
 }
-
