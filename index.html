@@ -8,6 +8,32 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Plain ES5 script (runs on any browser) that shows an upgrade
+      // message if the app never mounts into #root — e.g. the module
+      // script below failed to parse/execute on an unsupported browser.
+      window.addEventListener('error', function () {
+        showUnsupportedNotice();
+      });
+      setTimeout(function () {
+        var root = document.getElementById('root');
+        if (root && root.children.length === 0) {
+          showUnsupportedNotice();
+        }
+      }, 4000);
+      function showUnsupportedNotice() {
+        var root = document.getElementById('root');
+        if (!root || root.getAttribute('data-fallback-shown')) return;
+        root.setAttribute('data-fallback-shown', 'true');
+        root.innerHTML =
+          '<div style="max-width:32rem;margin:4rem auto;padding:1.5rem;' +
+          'font-family:sans-serif;text-align:center;color:#333;">' +
+          '<h1 style="font-size:1.25rem;margin-bottom:0.5rem;">This browser is not supported</h1>' +
+          '<p>BusyBee needs a newer browser to run. Please update Chrome, Safari, ' +
+          'Firefox, or Edge to a recent version and reload this page.</p>' +
+          '</div>';
+      }
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
