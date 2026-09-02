@@ -174,3 +174,18 @@
     font-size: 3rem;
   }
 }
+
+/* ---------------------------------------------------------------- */
+/* Flexbox `gap` fallback for browsers without it (Safari < 14.1,
+   e.g. iOS 9.3.5 / Safari 9.1) - margin-based polyfill scoped with
+   @supports so modern browsers (which already applied `gap` above)
+   are completely unaffected. Auto-generated - see
+   scripts/add_gap_fallback.py in project history. */
+@supports not (gap: 1px) {
+  .container {
+    margin: -0.5rem;
+  }
+  .container > * {
+    margin: 0.5rem;
+  }
+}

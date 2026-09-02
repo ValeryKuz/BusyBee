@@ -864,3 +864,193 @@
     font-size: clamp(1rem, 2.5vw, 1.25rem);
   }
 }
+
+/* ---------------------------------------------------------------- */
+/* Flexbox `gap` fallback for browsers without it (Safari < 14.1,
+   e.g. iOS 9.3.5 / Safari 9.1) - margin-based polyfill scoped with
+   @supports so modern browsers (which already applied `gap` above)
+   are completely unaffected. Auto-generated - see
+   scripts/add_gap_fallback.py in project history. */
+@supports not (gap: 1px) {
+  .loading {
+    margin: -0.75rem;
+  }
+  .loading > * {
+    margin: 0.75rem;
+  }
+}
+@supports not (gap: 1px) {
+  .empty {
+    margin: -0.75rem;
+  }
+  .empty > * {
+    margin: 0.75rem;
+  }
+}
+@supports not (gap: 1px) {
+  .selectScreen {
+    margin: -1rem;
+  }
+  .selectScreen > * {
+    margin: 1rem;
+  }
+}
+@supports not (gap: 1px) {
+  .selectHeader {
+    margin: -0.5rem;
+  }
+  .selectHeader > * {
+    margin: 0.5rem;
+  }
+}
+@supports not (gap: 1px) {
+  .avatarGrid {
+    margin: -0.75rem;
+  }
+  .avatarGrid > * {
+    margin: 0.75rem;
+  }
+}
+@supports not (gap: 1px) {
+  .avatarButton {
+    margin: -0.375rem;
+  }
+  .avatarButton > * {
+    margin: 0.375rem;
+  }
+}
+@supports not (gap: 1px) {
+  .modeHeader {
+    margin: 0;
+  }
+  .modeHeader > * {
+    margin: 0;
+  }
+}
+@supports not (gap: 1px) {
+  .modeGrid {
+    margin: -0.75rem;
+  }
+  .modeGrid > * {
+    margin: 0.75rem;
+  }
+}
+@supports not (gap: 1px) {
+  .modeButton {
+    margin: -0.5rem;
+  }
+  .modeButton > * {
+    margin: 0.5rem;
+  }
+}
+@supports not (gap: 1px) {
+  .header {
+    margin: 0;
+  }
+  .header > * {
+    margin: 0;
+  }
+}
+@supports not (gap: 1px) {
+  .activityButton {
+    margin: -0.25rem;
+  }
+  .activityButton > * {
+    margin: 0.25rem;
+  }
+}
+@supports not (gap: 1px) {
+  .feedbackContent {
+    margin: -0.5rem;
+  }
+  .feedbackContent > * {
+    margin: 0.5rem;
+  }
+}
+@media (min-width: 768px) and (orientation: landscape) {
+  @supports not (gap: 1px) {
+    .selectScreen {
+      margin: -0.75rem;
+    }
+    .selectScreen > * {
+      margin: 0.75rem;
+    }
+  }
+}
+@media (min-width: 768px) and (orientation: landscape) {
+  @supports not (gap: 1px) {
+    .modeGrid {
+      margin: -1rem;
+    }
+    .modeGrid > * {
+      margin: 1rem;
+    }
+  }
+}
+@media (min-width: 768px) and (orientation: landscape) {
+  @supports not (gap: 1px) {
+    .avatarGrid {
+      margin: -0.5rem;
+    }
+    .avatarGrid > * {
+      margin: 0.5rem;
+    }
+  }
+}
+@media (max-width: 767px) {
+  @supports not (gap: 1px) {
+    .modeGrid {
+      margin: -0.5rem;
+    }
+    .modeGrid > * {
+      margin: 0.5rem;
+    }
+  }
+}
+@media (min-width: 768px) and (orientation: portrait) {
+  @supports not (gap: 1px) {
+    .modeGrid {
+      margin: -1rem;
+    }
+    .modeGrid > * {
+      margin: 1rem;
+    }
+  }
+}
+@media (min-width: 768px) and (orientation: portrait) {
+  @supports not (gap: 1px) {
+    .avatarGrid {
+      margin: -1rem;
+    }
+    .avatarGrid > * {
+      margin: 1rem;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* CSS Grid fallback for browsers without it (Safari < 10.1, e.g. iOS
+   9.3.5 / Safari 9.1) - equal-width flexbox approximation, scoped with
+   @supports so modern browsers (using the real grid above) are
+   unaffected. Items sit flush instead of gapped in the fallback - see
+   the flexbox-gap fallback above for why replicating `gap` exactly
+   under wrapping is non-trivial. */
+@supports not (display: grid) {
+  .activitiesGrid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .activitiesGrid > * {
+    flex: 1 0 25%;
+    min-width: 0;
+  }
+}
+
+@media (min-width: 768px) and (orientation: landscape) {
+  @supports not (display: grid) {
+    .activitiesGrid > * {
+      flex-basis: 16.66%;
+    }
+  }
+}

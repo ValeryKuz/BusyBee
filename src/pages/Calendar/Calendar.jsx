@@ -334,6 +334,29 @@ export const Calendar = () => {
     return `linear-gradient(to bottom, ${stops})`;
   };
 
+  const hexToRgba = (hex, alpha) => {
+    const clean = hex.replace('#', '');
+    const value = parseInt(clean, 16);
+    const r = (value >> 16) & 255;
+    const g = (value >> 8) & 255;
+    const b = value & 255;
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  // Tints the whole row/bar with the kid's color (not just the edge stripe),
+  // so events are easy to tell apart by kid at a glance.
+  const getKidFillBackground = (colors) => {
+    if (colors.length === 0) return null;
+    if (colors.length === 1) {
+      return `linear-gradient(135deg, ${hexToRgba(colors[0], 0.32)}, ${hexToRgba(colors[0], 0.14)})`;
+    }
+    const step = 100 / colors.length;
+    const stops = colors
+      .map((c, i) => `${hexToRgba(c, 0.28)} ${i * step}%, ${hexToRgba(c, 0.28)} ${(i + 1) * step}%`)
+      .join(', ');
+    return `linear-gradient(to right, ${stops})`;
+  };
+
   const getIconsForTab = () => {
     if (entryTab === 'good') return BEHAVIOR_ICONS.good;
     if (entryTab === 'bad') return BEHAVIOR_ICONS.bad;
@@ -542,13 +565,20 @@ export const Calendar = () => {
             <div className={styles.eventBarsLayer}>
               {visibleBars.map((run) => {
                 const { participants } = extractParticipantsFromNote(run.note);
-                const stripeBg = getKidStripeBackground(getEventKidColors(run.note));
+                const kidColors = getEventKidColors(run.note);
+                const stripeBg = getKidStripeBackground(kidColors);
+                const fillBg = getKidFillBackground(kidColors);
                 return (
                   <button
                     key={`${run.id}-${weekDays[0].toString()}`}
                     type="button"
                     className={styles.eventBar}
-                    style={{ gridColumn: `${run.colStart + 1} / span ${run.colSpan}`, gridRow: run.lane + 1 }}
+                    style={{
+                      '--event-bar-col-start': run.colStart,
+                      '--event-bar-col-span': run.colSpan,
+                      '--event-bar-lane': run.lane,
+                      ...(fillBg ? { background: fillBg } : null),
+                    }}
                     onClick={(e) => {
                       e.stopPropagation();
                       openEventFromBar(run);
@@ -626,12 +656,14 @@ export const Calendar = () => {
               <div className={styles.detailsList}>
                 {dayEvents.map((event) => {
                   const { participants, cleanNote } = extractParticipantsFromNote(event.note);
-                  const stripeBg = getKidStripeBackground(getEventKidColors(event.note));
+                  const eventKidColors = getEventKidColors(event.note);
+                  const stripeBg = getKidStripeBackground(eventKidColors);
+                  const fillBg = getKidFillBackground(eventKidColors);
                   return (
                   <div
                     key={event.id}
                     className={`${styles.activityItem} ${(participants || cleanNote) ? styles.hasNote : ''}`}
-                    style={stripeBg ? { paddingLeft: 18 } : undefined}
+                    style={stripeBg ? { paddingLeft: 18, background: fillBg } : undefined}
                   >
                     {stripeBg && <span className={styles.eventKidStripe} style={{ background: stripeBg }} />}
                     <div className={styles.activityMain}>

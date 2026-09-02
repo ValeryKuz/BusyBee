@@ -284,3 +284,95 @@
     font-size: var(--font-size-md);
   }
 }
+
+/* ---------------------------------------------------------------- */
+/* Flexbox `gap` fallback for browsers without it (Safari < 14.1,
+   e.g. iOS 9.3.5 / Safari 9.1) - margin-based polyfill scoped with
+   @supports so modern browsers (which already applied `gap` above)
+   are completely unaffected. Auto-generated - see
+   scripts/add_gap_fallback.py in project history. */
+@supports not (gap: 1px) {
+  .container {
+    margin: -0.5rem;
+  }
+  .container > * {
+    margin: 0.5rem;
+  }
+}
+@supports not (gap: 1px) {
+  .tabs {
+    margin: -0.375rem;
+  }
+  .tabs > * {
+    margin: 0.375rem;
+  }
+}
+@supports not (gap: 1px) {
+  .tab {
+    margin: -1px;
+  }
+  .tab > * {
+    margin: 1px;
+  }
+}
+@supports not (gap: 1px) {
+  .iconButton {
+    margin: -2px;
+  }
+  .iconButton > * {
+    margin: 2px;
+  }
+}
+@supports not (gap: 1px) {
+  .feedback {
+    margin: -0.375rem;
+  }
+  .feedback > * {
+    margin: 0.375rem;
+  }
+}
+@supports not (gap: 1px) {
+  .foodIcons {
+    margin: -0.375rem;
+  }
+  .foodIcons > * {
+    margin: 0.375rem;
+  }
+}
+@media (min-width: 768px) {
+  @supports not (gap: 1px) {
+    .tabs {
+      margin: -0.5rem;
+    }
+    .tabs > * {
+      margin: 0.5rem;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* CSS Grid fallback for browsers without it (Safari < 10.1, e.g. iOS
+   9.3.5 / Safari 9.1), scoped with @supports so modern browsers (using
+   the real auto-fit grid above) are unaffected. flex-wrap + a fixed
+   flex-basis approximates auto-fit/minmax reasonably well. Items sit
+   flush instead of gapped - see the flexbox-gap fallback above for why
+   replicating `gap` exactly under wrapping is non-trivial. */
+@supports not (display: grid) {
+  .iconsGrid {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .iconsGrid > * {
+    flex: 1 1 64px;
+    min-width: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  @supports not (display: grid) {
+    .iconsGrid > * {
+      flex-basis: 100px;
+    }
+  }
+}

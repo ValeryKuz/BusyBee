@@ -1128,3 +1128,359 @@
     font-size: 2.2rem;
   }
 }
+
+/* ---------------------------------------------------------------- */
+/* Flexbox `gap` fallback for browsers without it (Safari < 14.1,
+   e.g. iOS 9.3.5 / Safari 9.1) - margin-based polyfill scoped with
+   @supports so modern browsers (which already applied `gap` above)
+   are completely unaffected. Auto-generated - see
+   scripts/add_gap_fallback.py in project history. */
+@supports not (gap: 1px) {
+  .addForm {
+    margin: -0.75rem;
+  }
+  .addForm > * {
+    margin: 0.75rem;
+  }
+}
+@supports not (gap: 1px) {
+  .foodSection {
+    margin: -0.375rem;
+  }
+  .foodSection > * {
+    margin: 0.375rem;
+  }
+}
+@supports not (gap: 1px) {
+  .foodRow {
+    margin: -0.5rem;
+  }
+  .foodRow > * {
+    margin: 0.5rem;
+  }
+}
+@supports not (gap: 1px) {
+  .foodRowIcons {
+    margin: -0.25rem;
+  }
+  .foodRowIcons > * {
+    margin: 0.25rem;
+  }
+}
+@supports not (gap: 1px) {
+  .greeting {
+    margin: -0.5rem;
+  }
+  .greeting > * {
+    margin: 0.5rem;
+  }
+}
+@supports not (gap: 1px) {
+  .nav {
+    margin: -0.25rem;
+  }
+  .nav > * {
+    margin: 0.25rem;
+  }
+}
+@supports not (gap: 1px) {
+  .main {
+    margin: -1rem;
+  }
+  .main > * {
+    margin: 1rem;
+  }
+}
+@supports not (gap: 1px) {
+  .topRow {
+    margin: -1rem;
+  }
+  .topRow > * {
+    margin: 1rem;
+  }
+}
+@supports not (gap: 1px) {
+  .topRowRight {
+    margin: -0.375rem;
+  }
+  .topRowRight > * {
+    margin: 0.375rem;
+  }
+}
+@supports not (gap: 1px) {
+  .childrenGrid {
+    margin: -0.5rem;
+  }
+  .childrenGrid > * {
+    margin: 0.5rem;
+  }
+}
+@supports not (gap: 1px) {
+  .dailyFunContent {
+    margin: -0.25rem;
+  }
+  .dailyFunContent > * {
+    margin: 0.25rem;
+  }
+}
+@supports not (gap: 1px) {
+  .dailyFunCategoryOption {
+    margin: -0.25rem;
+  }
+  .dailyFunCategoryOption > * {
+    margin: 0.25rem;
+  }
+}
+@supports not (gap: 1px) {
+  .loadingState {
+    margin: -0.75rem;
+  }
+  .loadingState > * {
+    margin: 0.75rem;
+  }
+}
+@supports not (gap: 1px) {
+  .errorState {
+    margin: -0.75rem;
+  }
+  .errorState > * {
+    margin: 0.75rem;
+  }
+}
+@supports not (gap: 1px) {
+  .emptyState {
+    margin: -0.5rem;
+  }
+  .emptyState > * {
+    margin: 0.5rem;
+  }
+}
+@supports not (gap: 1px) {
+  .eventsGrid {
+    margin: -0.5rem;
+  }
+  .eventsGrid > * {
+    margin: 0.5rem;
+  }
+}
+@supports not (gap: 1px) {
+  .formGroup {
+    margin: -0.375rem;
+  }
+  .formGroup > * {
+    margin: 0.375rem;
+  }
+}
+@supports not (gap: 1px) {
+  .settingsForm {
+    margin: -0.75rem;
+  }
+  .settingsForm > * {
+    margin: 0.75rem;
+  }
+}
+@supports not (gap: 1px) {
+  .settingsSection {
+    margin: -0.5rem;
+  }
+  .settingsSection > * {
+    margin: 0.5rem;
+  }
+}
+@supports not (gap: 1px) {
+  .settingsButtons {
+    margin: -0.375rem;
+  }
+  .settingsButtons > * {
+    margin: 0.375rem;
+  }
+}
+@supports not (gap: 1px) {
+  .kidsList {
+    margin: -0.25rem;
+  }
+  .kidsList > * {
+    margin: 0.25rem;
+  }
+}
+@supports not (gap: 1px) {
+  .kidsListItem {
+    margin: -0.375rem;
+  }
+  .kidsListItem > * {
+    margin: 0.375rem;
+  }
+}
+@media (min-width: 768px) and (orientation: landscape) {
+  @supports not (gap: 1px) {
+    .topRow {
+      margin: -0.5rem;
+    }
+    .topRow > * {
+      margin: 0.5rem;
+    }
+  }
+}
+@media (min-width: 768px) and (orientation: landscape) {
+  @supports not (gap: 1px) {
+    .childrenGrid {
+      margin: -0.375rem;
+    }
+    .childrenGrid > * {
+      margin: 0.375rem;
+    }
+  }
+}
+@media (min-width: 768px) and (orientation: landscape) {
+  @supports not (gap: 1px) {
+    .main {
+      margin: -0.375rem;
+    }
+    .main > * {
+      margin: 0.375rem;
+    }
+  }
+}
+@media (min-width: 1024px) and (orientation: landscape) {
+  @supports not (gap: 1px) {
+    .topRow {
+      margin: -0.75rem;
+    }
+    .topRow > * {
+      margin: 0.75rem;
+    }
+  }
+}
+@media (min-width: 1024px) and (orientation: landscape) {
+  @supports not (gap: 1px) {
+    .childrenGrid {
+      margin: -0.5rem;
+    }
+    .childrenGrid > * {
+      margin: 0.5rem;
+    }
+  }
+}
+@supports not (gap: 1px) {
+  .kidsScreenButton {
+    margin: -0.375rem;
+  }
+  .kidsScreenButton > * {
+    margin: 0.375rem;
+  }
+}
+@supports not (gap: 1px) {
+  .childModal {
+    margin: -0.75rem;
+  }
+  .childModal > * {
+    margin: 0.75rem;
+  }
+}
+@supports not (gap: 1px) {
+  .childModalLeft {
+    margin: -0.5rem;
+  }
+  .childModalLeft > * {
+    margin: 0.5rem;
+  }
+}
+@media (max-width: 700px) {
+  @supports not (gap: 1px) {
+    .childModalLeft {
+      margin: -0.75rem;
+    }
+    .childModalLeft > * {
+      margin: 0.75rem;
+    }
+  }
+}
+@media (max-width: 1000px) {
+  @supports not (gap: 1px) {
+    .topRow {
+      margin: -0.5rem;
+    }
+    .topRow > * {
+      margin: 0.5rem;
+    }
+  }
+}
+@media (max-width: 600px) {
+  @supports not (gap: 1px) {
+    .header {
+      margin: -0.5rem;
+    }
+    .header > * {
+      margin: 0.5rem;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* CSS Grid fallback for browsers without it (Safari < 10.1, e.g. iOS
+   9.3.5 / Safari 9.1) - equal-width flexbox approximation, scoped with
+   @supports so modern browsers (which use the real grid above) are
+   unaffected. Doesn't attempt to reproduce the `gap` spacing exactly
+   (see the flexbox-gap fallback above for why that's non-trivial with
+   wrapping) - items sit flush in the fallback instead of gapped. */
+@supports not (display: grid) {
+  .dailyFunCategoryGrid,
+  .avatarGrid,
+  .kidsListColorPicker {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .dailyFunCategoryGrid > * {
+    flex: 1 0 33.33%;
+    min-width: 0;
+  }
+
+  .avatarGrid > * {
+    flex: 1 0 16.66%;
+    min-width: 0;
+  }
+
+  .kidsListColorPicker > * {
+    flex: 1 0 20%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 768px), (orientation: portrait) {
+  @supports not (display: grid) {
+    .dailyFunCategoryGrid > * {
+      flex-basis: 50%;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  @supports not (display: grid) {
+    .avatarGrid > * {
+      flex-basis: 25%;
+    }
+  }
+}
+
+@media (min-width: 768px) and (orientation: landscape) {
+  @supports not (display: grid) {
+    .eventsList {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .eventsList > * {
+      flex: 1 1 250px;
+      min-width: 0;
+    }
+  }
+}
+
+@media (min-width: 1024px) and (orientation: landscape) {
+  @supports not (display: grid) {
+    .eventsList > * {
+      flex-basis: 300px;
+    }
+  }
+}
