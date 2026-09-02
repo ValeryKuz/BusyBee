@@ -29,6 +29,7 @@ export const Dashboard = () => {
     getDailyFunContent,
     loading,
     error,
+    loadFailed,
   } = useHive();
   const [selectedChildId, setSelectedChildId] = useState(null);
   const [showAddChild, setShowAddChild] = useState(false);
@@ -37,6 +38,8 @@ export const Dashboard = () => {
   const [newChildAvatar, setNewChildAvatar] = useState(ANIMAL_AVATARS[0].emoji);
   const [newChildBirthday, setNewChildBirthday] = useState('');
   const [colorPickerChildId, setColorPickerChildId] = useState(null);
+  const [confirmDeleteChildId, setConfirmDeleteChildId] = useState(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
 
   const selectedChild = children.find((c) => c.id === selectedChildId) || null;
   const upcomingEvents = getUpcomingEvents().slice(0, 3);
@@ -152,7 +155,7 @@ export const Dashboard = () => {
     );
   }
 
-  if (error) {
+  if (loadFailed) {
     return (
       <div className={styles.page}>
         <div className={styles.errorState}>
@@ -299,47 +302,85 @@ export const Dashboard = () => {
               <h3 className={styles.settingsSectionTitle}>🐝 Manage Kids</h3>
               <div className={styles.kidsList}>
                 {children.map((child) => (
-                  <div key={child.id} className={styles.kidsListItem}>
-                    <span className={styles.kidsListAvatar}>{child.avatar}</span>
-                    <span className={styles.kidsListName}>{child.name}</span>
-                    {child.birthday && <span className={styles.kidsListBirthday}>🎂 {formatBirthday(child.birthday)}</span>}
-                    <div className={styles.kidsListColorWrap}>
-                      <button
-                        type="button"
-                        className={styles.kidsListColorSwatch}
-                        style={{ background: getChildColor(child.id) }}
-                        title="Calendar color"
-                        onClick={() => setColorPickerChildId(colorPickerChildId === child.id ? null : child.id)}
-                      />
-                      {colorPickerChildId === child.id && (
-                        <div className={styles.kidsListColorPicker}>
-                          {KID_COLORS.map((color) => (
-                            <button
-                              key={color}
-                              type="button"
-                              className={styles.kidsListColorOption}
-                              style={{ background: color }}
-                              onClick={() => {
-                                updateChild(child.id, { color });
-                                setColorPickerChildId(null);
-                              }}
-                            />
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    <button
-                      className={styles.kidsListDelete}
-                      onClick={() => {
-                        if (window.confirm(`Remove ${child.name}? This will delete all their data.`)) {
+                  confirmDeleteChildId === child.id ? (
+                    <div key={child.id} className={styles.kidsListItem}>
+                      <span className={styles.kidsListAvatar}>{child.avatar}</span>
+                      <div className={styles.deleteConfirmRow}>
+                        <span className={styles.deleteConfirmLabel}>
+                          Type <strong>{child.name}</strong> to remove
+                        </span>
+                        <input
+                          type="text"
+                          className={styles.deleteConfirmInput}
+                          value={deleteConfirmText}
+                          onChange={(e) => setDeleteConfirmText(e.target.value)}
+                          autoFocus
+                        />
+                      </div>
+                      <Button
+                        variant="danger"
+                        size="small"
+                        disabled={deleteConfirmText !== child.name}
+                        onClick={() => {
                           deleteChild(child.id);
                           if (selectedChildId === child.id) setSelectedChildId(null);
-                        }
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
+                          setConfirmDeleteChildId(null);
+                          setDeleteConfirmText('');
+                        }}
+                      >
+                        Remove
+                      </Button>
+                      <button
+                        className={styles.kidsListDelete}
+                        onClick={() => {
+                          setConfirmDeleteChildId(null);
+                          setDeleteConfirmText('');
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ) : (
+                    <div key={child.id} className={styles.kidsListItem}>
+                      <span className={styles.kidsListAvatar}>{child.avatar}</span>
+                      <span className={styles.kidsListName}>{child.name}</span>
+                      {child.birthday && <span className={styles.kidsListBirthday}>🎂 {formatBirthday(child.birthday)}</span>}
+                      <div className={styles.kidsListColorWrap}>
+                        <button
+                          type="button"
+                          className={styles.kidsListColorSwatch}
+                          style={{ background: getChildColor(child.id) }}
+                          title="Calendar color"
+                          onClick={() => setColorPickerChildId(colorPickerChildId === child.id ? null : child.id)}
+                        />
+                        {colorPickerChildId === child.id && (
+                          <div className={styles.kidsListColorPicker}>
+                            {KID_COLORS.map((color) => (
+                              <button
+                                key={color}
+                                type="button"
+                                className={styles.kidsListColorOption}
+                                style={{ background: color }}
+                                onClick={() => {
+                                  updateChild(child.id, { color });
+                                  setColorPickerChildId(null);
+                                }}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        className={styles.kidsListDelete}
+                        onClick={() => {
+                          setConfirmDeleteChildId(child.id);
+                          setDeleteConfirmText('');
+                        }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )
                 ))}
               </div>
               <Button variant="accent" size="small" onClick={() => { setShowSettings(false); setShowAddChild(true); }}>

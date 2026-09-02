@@ -50,6 +50,9 @@ export const HiveProvider = ({ children: childrenProp }) => {
   const [settings, setSettings] = useState({ dailyFunCategory: 'animal', showHolidays: false });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [loadFailed, setLoadFailed] = useState(false);
+
+  const clearError = useCallback(() => setError(null), []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -105,6 +108,7 @@ export const HiveProvider = ({ children: childrenProp }) => {
     const loadData = async () => {
       try {
         setLoading(true);
+        setLoadFailed(false);
         const [childrenData, entriesData, eventsData, dailyFunCategory, showHolidays] = await Promise.all([
           db.fetchChildren(),
           db.fetchEntries(),
@@ -116,13 +120,14 @@ export const HiveProvider = ({ children: childrenProp }) => {
         setChildren(childrenData);
         setEntries(entriesData.map(mapEntryFromDb));
         setEvents(eventsData.map(mapEventFromDb));
-        setSettings({ 
+        setSettings({
           dailyFunCategory: dailyFunCategory || 'animal',
           showHolidays: showHolidays === 'true',
         });
       } catch (err) {
         console.error('Failed to load data:', err);
         setError(err.message);
+        setLoadFailed(true);
       } finally {
         setLoading(false);
       }
@@ -473,6 +478,8 @@ export const HiveProvider = ({ children: childrenProp }) => {
     settings,
     loading,
     error,
+    clearError,
+    loadFailed,
     addChild,
     updateChild,
     deleteChild,

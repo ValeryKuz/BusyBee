@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHive } from '../../hooks/useHive';
+import { usePendingAction } from '../../hooks/usePendingAction';
+import { useLongPress } from '../../hooks/useLongPress';
 import { BeeMascot } from '../../components/BeeMascot';
 import { getLocalDate } from '../../utils/dateUtils';
 import {
@@ -28,10 +30,10 @@ export const Kids = () => {
   const [selectedChild, setSelectedChild] = useState(null);
   const [selectedMode, setSelectedMode] = useState(null);
   const [feedback, setFeedback] = useState(null);
-  const [pendingActivity, setPendingActivity] = useState(null);
+  const [pendingActivity, runActivity] = usePendingAction();
 
   const completedActivities = useMemo(() => {
-    if (!selectedChild || !selectedMode || selectedMode === 'food') return new Set();
+    if (!selectedChild || !selectedMode) return new Set();
     const today = getLocalDate();
     return new Set(
       entries
@@ -40,19 +42,16 @@ export const Kids = () => {
     );
   }, [entries, selectedChild, selectedMode]);
 
-  const handleActivityTap = async (activity) => {
-    if (!selectedChild || pendingActivity || completedActivities.has(activity.emoji)) return;
+  const handleActivityTap = (activity) => {
+    if (!selectedChild || completedActivities.has(activity.emoji)) return;
 
-    setPendingActivity(activity.emoji);
-    try {
+    runActivity(activity.emoji, async () => {
       const isFood = selectedMode === 'food';
       const type = isFood ? ENTRY_TYPES.FOOD : ENTRY_TYPES.GOOD;
       await addEntry(selectedChild.id, type, activity.emoji, null, selectedMode, isFood ? 0 : undefined);
       setFeedback(activity);
       setTimeout(() => setFeedback(null), 2000);
-    } finally {
-      setPendingActivity(null);
-    }
+    });
   };
 
   const handleBack = () => {
@@ -63,6 +62,8 @@ export const Kids = () => {
     }
     setFeedback(null);
   };
+
+  const exitToDashboard = useLongPress(() => navigate('/'), { duration: 2000 });
 
   if (loading) {
     return (
@@ -90,7 +91,11 @@ export const Kids = () => {
   if (!selectedChild) {
     return (
       <div className={styles.page}>
-        <button className={styles.backButtonTop} onClick={() => navigate('/')}>
+        <button
+          className={`${styles.backButtonTop} ${exitToDashboard.pressing ? styles.backButtonTopHolding : ''}`}
+          {...exitToDashboard.handlers}
+          title="Hold for 2 seconds to leave Kids mode"
+        >
           ←
         </button>
         <div className={styles.selectScreen}>

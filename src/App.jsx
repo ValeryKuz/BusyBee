@@ -6,10 +6,12 @@ import { Events } from './pages/Events';
 import { Calendar } from './pages/Calendar';
 import { Kids } from './pages/Kids';
 import { Auth } from './pages/Auth';
+import { GlobalErrorToast } from './components/GlobalErrorToast';
 
 function App() {
   return (
     <HiveProvider>
+      <GlobalErrorToast />
       <Routes>
         <Route path="/auth" element={<Auth />} />
         <Route

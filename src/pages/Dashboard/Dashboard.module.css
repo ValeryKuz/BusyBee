@@ -683,6 +683,35 @@
   border-color: var(--color-dark-text);
 }
 
+.deleteConfirmRow {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+.deleteConfirmLabel {
+  font-size: 0.8rem;
+  font-size: var(--font-size-xs);
+  color: #4A4A4A;
+  color: var(--color-dark-text);
+}
+
+.deleteConfirmInput {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #FF9B9B;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  background: white;
+}
+
+.deleteConfirmInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 155, 155, 0.3);
+}
+
 .kidsListDelete {
   width: 28px;
   height: 28px;

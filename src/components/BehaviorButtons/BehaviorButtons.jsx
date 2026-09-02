@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useHive } from '../../hooks/useHive';
+import { usePendingAction } from '../../hooks/usePendingAction';
 import { BEHAVIOR_ICONS, ENTRY_TYPES } from '../../utils/constants';
 import styles from './BehaviorButtons.module.css';
 
@@ -8,19 +9,14 @@ export const BehaviorButtons = ({ childId }) => {
   const { addEntry } = useHive();
   const [activeTab, setActiveTab] = useState('good');
   const [lastAdded, setLastAdded] = useState(null);
-  const [pendingEmoji, setPendingEmoji] = useState(null);
+  const [pendingEmoji, runIconClick] = usePendingAction();
 
-  const handleIconClick = async (item, type) => {
-    if (pendingEmoji) return;
-
-    setPendingEmoji(item.emoji);
-    try {
+  const handleIconClick = (item, type) => {
+    runIconClick(item.emoji, async () => {
       await addEntry(childId, type, item.emoji);
       setLastAdded({ ...item, type: activeTab });
       setTimeout(() => setLastAdded(null), 1500);
-    } finally {
-      setPendingEmoji(null);
-    }
+    });
   };
 
   const getItems = () => {

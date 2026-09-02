@@ -283,6 +283,26 @@
   transform: scale(1.1);
 }
 
+.backButtonTopHolding {
+  background: #FCFFA6;
+  background: var(--color-honey);
+  overflow: hidden;
+}
+
+.backButtonTopHolding::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(74, 74, 74, 0.25);
+  transform-origin: left;
+  animation: holdFill 2s linear forwards;
+}
+
+@keyframes holdFill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 .header {
   display: flex;
   flex-direction: column;
